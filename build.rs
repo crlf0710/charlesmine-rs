@@ -1,5 +1,5 @@
 #[cfg(windows)]
-extern crate windres;
+extern crate embed_resource;
 
 #[cfg(not(windows))]
 fn compile_resource() {
@@ -8,8 +8,7 @@ fn compile_resource() {
 
 #[cfg(windows)]
 fn compile_resource() {
-    use windres::Build;
-    Build::new().compile("res/charlesmine.rc").unwrap();
+    embed_resource::compile("res/charlesmine.rc");
 }
 
 fn main() {

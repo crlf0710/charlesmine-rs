@@ -1,83 +1,18 @@
-// Microsoft Visual C++ generated resource script.
-//
-#include "resource.h"
+﻿#include "resource.h"
 
-#define APSTUDIO_READONLY_SYMBOLS
-/////////////////////////////////////////////////////////////////////////////
-//
-// Generated from the TEXTINCLUDE 2 resource.
-//
-#define APSTUDIO_HIDDEN_SYMBOLS
 #include "windows.h"
-#undef APSTUDIO_HIDDEN_SYMBOLS
 
-/////////////////////////////////////////////////////////////////////////////
-#undef APSTUDIO_READONLY_SYMBOLS
+#pragma code_page(65001)
 
-/////////////////////////////////////////////////////////////////////////////
-// ����(�л����񹲺͹�) resources
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 
-#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
-#ifdef _WIN32
-LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
-#pragma code_page(936)
-#endif //_WIN32
-
-/////////////////////////////////////////////////////////////////////////////
-//
 // Icon
-//
 
-// Icon with lowest ID value placed first to ensure application icon
-// remains consistent on all systems.
 IDI_CHARLESMINE         ICON                    "../res/CharlesMine.ico"
 
-/////////////////////////////////////////////////////////////////////////////
-//
-// Menu
-//
-
-IDC_CHARLESMINE MENU 
-BEGIN
-    POPUP "�ļ�(&F)"
-    BEGIN
-        MENUITEM "����(&N)\tF2",                  IDM_FILE_NEW
-        MENUITEM SEPARATOR
-        MENUITEM "����(&B)",                      IDM_FILE_GAME_EASY
-        MENUITEM "�м�(&I)",                      IDM_FILE_GAME_MEDIUM
-        MENUITEM "�߼�(&E)",                      IDM_FILE_GAME_HARD
-        MENUITEM "�Զ���(&C)...",                  IDM_FILE_GAME_CUSTOM
-        MENUITEM SEPARATOR
-        MENUITEM "���(?)(&M)",                   IDM_FILE_MARK
-        MENUITEM SEPARATOR
-        MENUITEM "ɨ��Ӣ�۰�(&T)...",                IDM_FILE_HERO_LIST
-        MENUITEM SEPARATOR
-        MENUITEM "�˳�(&X)",                      IDM_FILE_EXIT
-    END
-    POPUP "�߼�(&A)"
-    BEGIN
-        MENUITEM "�����׾�(&L)\tF5",                IDM_ADVANCED_LOADMAP
-        MENUITEM "�����׾�(&S)\tF6",                IDM_ADVANCED_SAVEMAP
-        MENUITEM SEPARATOR
-        MENUITEM "���¿�ʼ����(&R)\tF8",              IDM_ADVANCED_RESTART
-        MENUITEM SEPARATOR
-        MENUITEM "��ʼ¼��(&E)",                    IDM_ADVANCED_RECORD_RECORD
-        MENUITEM "��ʼ�ط�(&P)",                    IDM_ADVANCED_RECORD_PLAY
-        MENUITEM "ֹͣ(&S)\tF12",                 IDM_ADVANCED_RECORD_STOP
-    END
-    POPUP "����(&H)"
-    BEGIN
-        MENUITEM "���� ��ʯɨ��(&A)...",              IDM_HELP_ABOUT
-    END
-END
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
 // Accelerator
-//
 
-IDC_CHARLESMINE ACCELERATORS 
+IDC_CHARLESMINE ACCELERATORS
 BEGIN
     "/",            IDM_HELP_ABOUT,         ASCII,  ALT, NOINVERT
     "?",            IDM_HELP_ABOUT,         ASCII,  ALT, NOINVERT
@@ -88,11 +23,13 @@ BEGIN
     VK_F6,          IDM_ADVANCED_SAVEMAP,   VIRTKEY, NOINVERT
 END
 
+// Bitmap
 
-/////////////////////////////////////////////////////////////////////////////
-//
+IDB_BLOCKS              BITMAP                  "..\\res\\Blocks.bmp"
+IDB_BUTTON              BITMAP                  "..\\res\\Button.bmp"
+IDB_DIGIT               BITMAP                  "..\\res\\Digit.bmp"
+
 // Dialog
-//
 
 IDD_ABOUTBOX DIALOGEX 22, 17, 186, 84
 STYLE DS_SETFONT | DS_MODALFRAME | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
@@ -102,7 +39,6 @@ BEGIN
     ICON            IDI_CHARLESMINE,IDC_MYICON,14,9,21,21
     LTEXT           "CharlesMine 1.0",IDC_TEXT1,49,10,119,8,SS_NOPREFIX
     LTEXT           "CrLF0710 Home-made",IDC_TEXT2,49,20,119,8
-    LTEXT           "Secret thanks to LonelyFighter for testing and helping set up the mine field sizes.",IDC_TEXT3,49,30,119,32
     DEFPUSHBUTTON   "OK",IDOK,75,64,36,15,WS_GROUP
 END
 
@@ -148,141 +84,188 @@ BEGIN
     LTEXT           "",IDC_EXTRA3,92,35,76,8,NOT WS_GROUP
 END
 
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 
-#ifdef APSTUDIO_INVOKED
-/////////////////////////////////////////////////////////////////////////////
-//
-// TEXTINCLUDE
-//
+// Menu
 
-1 TEXTINCLUDE 
+IDC_CHARLESMINE MENU
 BEGIN
-    "resource.h\0"
-END
-
-2 TEXTINCLUDE 
-BEGIN
-    "#define APSTUDIO_HIDDEN_SYMBOLS\r\n"
-    "#include ""windows.h""\r\n"
-    "#undef APSTUDIO_HIDDEN_SYMBOLS\r\n"
-    "\0"
-END
-
-3 TEXTINCLUDE 
-BEGIN
-    "\r\n"
-    "\0"
-END
-
-#endif    // APSTUDIO_INVOKED
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Bitmap
-//
-
-IDB_BLOCKS              BITMAP                  "..\\res\\Blocks.bmp"
-IDB_BUTTON              BITMAP                  "..\\res\\Button.bmp"
-IDB_DIGIT               BITMAP                  "..\\res\\Digit.bmp"
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// DESIGNINFO
-//
-
-#ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO 
-BEGIN
-    IDD_ABOUTBOX, DIALOG
+    POPUP "&Game"
     BEGIN
-        LEFTMARGIN, 14
-        RIGHTMARGIN, 168
-        TOPMARGIN, 9
-        BOTTOMMARGIN, 79
+        MENUITEM "&New\tF2",                  IDM_FILE_NEW
+        MENUITEM SEPARATOR
+        MENUITEM "&Beginner",                      IDM_FILE_GAME_EASY
+        MENUITEM "&Intermediate",                      IDM_FILE_GAME_MEDIUM
+        MENUITEM "&Expert",                      IDM_FILE_GAME_HARD
+        MENUITEM "&Custom...",                  IDM_FILE_GAME_CUSTOM
+        MENUITEM SEPARATOR
+        MENUITEM "&Marks (?)",                   IDM_FILE_MARK
+        MENUITEM SEPARATOR
+        MENUITEM "Best &Times...",                IDM_FILE_HERO_LIST
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit",                      IDM_FILE_EXIT
     END
-
-    IDD_CUSTOM_GAME, DIALOG
+    POPUP "&Advanced"
     BEGIN
-        LEFTMARGIN, 7
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 83
+        MENUITEM "&Load Game\tF5",                IDM_ADVANCED_LOADMAP
+        MENUITEM "&Save Game\tF6",                IDM_ADVANCED_SAVEMAP
+        MENUITEM SEPARATOR
+        MENUITEM "&Restart Game\tF8",              IDM_ADVANCED_RESTART
+        MENUITEM SEPARATOR
+        MENUITEM "Start R&ecording",                    IDM_ADVANCED_RECORD_RECORD
+        MENUITEM "Start &Playback",                    IDM_ADVANCED_RECORD_PLAY
+        MENUITEM "S&top Recording/Playback\tF12",                 IDM_ADVANCED_RECORD_STOP
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "&About CharlesMine...",              IDM_HELP_ABOUT
     END
 END
-#endif    // APSTUDIO_INVOKED
 
-
-/////////////////////////////////////////////////////////////////////////////
-//
 // String Table
-//
+
+STRINGTABLE
+BEGIN
+    IDS_APP_TITLE           "钻石扫雷"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_ABOUTTEXT           "关于"
+    IDS_ABOUTTEXT1          "钻石扫雷 1.0"
+    IDS_ABOUTTEXT2          "CrLF0710 制作"
+    IDS_ABOUTTEXT3          "本程序仅为娱乐用途，您可以在不进行修改的基础上随意传播。\n钻石: 在开局前同时按左右键。"
+    IDS_CUSTOMGAME          "自定义雷区"
+    IDS_CUSTOMGAME_HEIGHT   "高度(&H):"
+    IDS_CUSTOMGAME_WIDTH    "宽度(&W):"
+    IDS_CUSTOMGAME_MINE     "雷数(&M):"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_HERO_NAME           "匿名"
+    IDS_HERO_NAME_TEXT1     "已破初级记录。\n请留尊姓大名。"
+    IDS_HERO_NAME_TEXT2     "已破中级记录。\n请留尊姓大名。"
+    IDS_HERO_NAME_TEXT3     "已破高级记录。\n请留尊姓大名。"
+    IDS_HERO_LIST           "扫雷英雄榜"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_HERO_LIST_TEXT1     "初级:"
+    IDS_HERO_LIST_TEXT2     "中级:"
+    IDS_HERO_LIST_TEXT3     "高级:"
+    IDS_HERO_LIST_BUTTON    "重新计分(&R)"
+    IDS_FILE_FILTER         "地图文件(*.cmm)|*.cmm|所有文件(*.*)|*.*|"
+    IDS_REPLAY_FILTER       "录像文件(*.cmr)|*.cmr|所有文件(*.*)|*.*|"
+    IDS_FILE_SAVE_ERROR     "保存文件发生错误，保存失败！"
+    IDS_FILE_LOAD_ERROR     "打开文件发生错误，打开失败！"
+    IDS_FILE_RECORD_FINISH  "录制结束"
+    IDS_FILE_PLAYBACK_FINISH "播放结束"
+    IDS_APP_TITLE_RECORD    "钻石扫雷 - 按 F12 键结束"
+END
+
+STRINGTABLE
+BEGIN
+    IDOK                    "OK"
+    IDCANCEL                "Cancel"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_FILE_RECORD_START   "准备好后请点击确定或按回车键开始录像。"
+    IDS_FILE_RECORD_RESTART "本局失败！要重新开始一局并重新录像么？"
+END
+
+LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
+
+// Menu
+
+IDC_CHARLESMINE MENU 
+BEGIN
+    POPUP "游戏(&G)"
+    BEGIN
+        MENUITEM "开局(&N)\tF2",                  IDM_FILE_NEW
+        MENUITEM SEPARATOR
+        MENUITEM "初级(&B)",                      IDM_FILE_GAME_EASY
+        MENUITEM "中级(&I)",                      IDM_FILE_GAME_MEDIUM
+        MENUITEM "高级(&E)",                      IDM_FILE_GAME_HARD
+        MENUITEM "自定义(&C)...",                  IDM_FILE_GAME_CUSTOM
+        MENUITEM SEPARATOR
+        MENUITEM "标记(?)(&M)",                   IDM_FILE_MARK
+        MENUITEM SEPARATOR
+        MENUITEM "扫雷英雄榜(&T)...",                IDM_FILE_HERO_LIST
+        MENUITEM SEPARATOR
+        MENUITEM "退出(&X)",                      IDM_FILE_EXIT
+    END
+    POPUP "高级(&A)"
+    BEGIN
+        MENUITEM "加载雷局(&L)\tF5",                IDM_ADVANCED_LOADMAP
+        MENUITEM "保存雷局(&S)\tF6",                IDM_ADVANCED_SAVEMAP
+        MENUITEM SEPARATOR
+        MENUITEM "重新开始本局(&R)\tF8",              IDM_ADVANCED_RESTART
+        MENUITEM SEPARATOR
+        MENUITEM "开始录像(&E)",                    IDM_ADVANCED_RECORD_RECORD
+        MENUITEM "开始回放(&P)",                    IDM_ADVANCED_RECORD_PLAY
+        MENUITEM "停止(&T)\tF12",                 IDM_ADVANCED_RECORD_STOP
+    END
+    POPUP "帮助(&H)"
+    BEGIN
+        MENUITEM "关于 钻石扫雷(&A)...",              IDM_HELP_ABOUT
+    END
+END
+
+// String Table
 
 STRINGTABLE 
 BEGIN
-    IDS_APP_TITLE           "��ʯɨ��"
-    IDC_CHARLESMINE         "CHARLESMINE"
+    IDS_APP_TITLE           "钻石扫雷"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_ABOUTTEXT           "����"
-    IDS_ABOUTTEXT1          "��ʯɨ�� 1.0"
-    IDS_ABOUTTEXT2          "CrLF0710 ����"
-    IDS_ABOUTTEXT3          "�������Ϊ������;���������ڲ������޸ĵĻ��������⴫����\n��ʯ: �ڿ���ǰͬʱ�����Ҽ���"
-    IDS_CUSTOMGAME          "�Զ�������"
-    IDS_CUSTOMGAME_HEIGHT   "�߶�(&H):"
-    IDS_CUSTOMGAME_WIDTH    "����(&W):"
-    IDS_CUSTOMGAME_MINE     "����(&M):"
+    IDS_ABOUTTEXT           "关于"
+    IDS_ABOUTTEXT1          "钻石扫雷 1.0"
+    IDS_ABOUTTEXT2          "CrLF0710 制作"
+    IDS_ABOUTTEXT3          "本程序仅为娱乐用途，您可以在不进行修改的基础上随意传播。\n钻石: 在开局前同时按左右键。"
+    IDS_CUSTOMGAME          "自定义雷区"
+    IDS_CUSTOMGAME_HEIGHT   "高度(&H):"
+    IDS_CUSTOMGAME_WIDTH    "宽度(&W):"
+    IDS_CUSTOMGAME_MINE     "雷数(&M):"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_HERO_NAME           "����"
-    IDS_HERO_NAME_TEXT1     "���Ƴ�����¼��\n�������մ�����"
-    IDS_HERO_NAME_TEXT2     "�����м���¼��\n�������մ�����"
-    IDS_HERO_NAME_TEXT3     "���Ƹ߼���¼��\n�������մ�����"
-    IDS_HERO_LIST           "ɨ��Ӣ�۰�"
+    IDS_HERO_NAME           "匿名"
+    IDS_HERO_NAME_TEXT1     "已破初级记录。\n请留尊姓大名。"
+    IDS_HERO_NAME_TEXT2     "已破中级记录。\n请留尊姓大名。"
+    IDS_HERO_NAME_TEXT3     "已破高级记录。\n请留尊姓大名。"
+    IDS_HERO_LIST           "扫雷英雄榜"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_HERO_LIST_TEXT1     "����:"
-    IDS_HERO_LIST_TEXT2     "�м�:"
-    IDS_HERO_LIST_TEXT3     "�߼�:"
-    IDS_HERO_LIST_BUTTON    "���¼Ʒ�(&R)"
-    IDS_FILE_FILTER         "��ͼ�ļ�(*.cmm)|*.cmm|�����ļ�(*.*)|*.*|"
-    IDS_REPLAY_FILTER       "¼���ļ�(*.cmr)|*.cmr|�����ļ�(*.*)|*.*|"
-    IDS_FILE_SAVE_ERROR     "�����ļ��������󣬱���ʧ�ܣ�"
-    IDS_FILE_LOAD_ERROR     "���ļ��������󣬴�ʧ�ܣ�"
-    IDS_FILE_RECORD_FINISH  "¼�ƽ���"
-    IDS_FILE_PLAYBACK_FINISH "���Ž���"
-    IDS_APP_TITLE_RECORD    "��ʯɨ�� - �� F12 ������"
+    IDS_HERO_LIST_TEXT1     "初级:"
+    IDS_HERO_LIST_TEXT2     "中级:"
+    IDS_HERO_LIST_TEXT3     "高级:"
+    IDS_HERO_LIST_BUTTON    "重新计分(&R)"
+    IDS_FILE_FILTER         "地图文件(*.cmm)|*.cmm|所有文件(*.*)|*.*|"
+    IDS_REPLAY_FILTER       "录像文件(*.cmr)|*.cmr|所有文件(*.*)|*.*|"
+    IDS_FILE_SAVE_ERROR     "保存文件发生错误，保存失败！"
+    IDS_FILE_LOAD_ERROR     "打开文件发生错误，打开失败！"
+    IDS_FILE_RECORD_FINISH  "录制结束"
+    IDS_FILE_PLAYBACK_FINISH "播放结束"
+    IDS_APP_TITLE_RECORD    "钻石扫雷 - 按 F12 键结束"
 END
 
 STRINGTABLE 
 BEGIN
-    IDOK                    "ȷ��"
-    IDCANCEL                "ȡ��"
+    IDOK                    "确定"
+    IDCANCEL                "取消"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_FILE_RECORD_START   "׼���ú�����ȷ���򰴻س�����ʼ¼��"
-    IDS_FILE_RECORD_RESTART "����ʧ�ܣ�Ҫ���¿�ʼһ�ֲ�����¼��ô��"
+    IDS_FILE_RECORD_START   "准备好后请点击确定或按回车键开始录像。"
+    IDS_FILE_RECORD_RESTART "本局失败！要重新开始一局并重新录像么？"
 END
-
-#endif    // ����(�л����񹲺͹�) resources
-/////////////////////////////////////////////////////////////////////////////
-
-
-
-#ifndef APSTUDIO_INVOKED
-/////////////////////////////////////////////////////////////////////////////
-//
-// Generated from the TEXTINCLUDE 3 resource.
-//
-
-
-/////////////////////////////////////////////////////////////////////////////
-#endif    // not APSTUDIO_INVOKED
-

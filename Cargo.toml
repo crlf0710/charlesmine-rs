@@ -2,10 +2,12 @@
 name = "charlesmine"
 version = "0.1.0"
 authors = ["CrLF0710 <crlf0710@gmail.com>"]
+# edition = "2018"
 
 [dependencies]
 apiw = { git = "https://github.com/crlf0710/apiw-rs" }
 concerto = { git = "https://github.com/crlf0710/concerto-rs" }
+domino = { git = "https://github.com/crlf0710/domino-rs" }
 rand = "0.5"
 chrono = "0.4"
 clamp = "0.1"
@@ -13,5 +15,6 @@ smallvec = "0.6"
 log = "0.4"
 env_logger = "0.5"
 
+
 [target.'cfg(windows)'.build-dependencies]
-windres = "0.2"
+embed-resource = "1"
