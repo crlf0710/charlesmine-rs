@@ -53,7 +53,7 @@ impl Default for BoardSetting {
     }
 }
 
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone, Debug, PartialEq)]
 pub struct AllowMarks(pub bool);
 
 impl Default for AllowMarks {
@@ -62,10 +62,24 @@ impl Default for AllowMarks {
     }
 }
 
+#[derive(Copy, Clone, Debug, PartialEq)]
+pub enum ZoomRatio {
+    Zoom1x,
+    Zoom2x,
+    Zoom3x,
+}
+
+impl Default for ZoomRatio {
+    fn default() -> Self {
+        ZoomRatio::Zoom1x
+    }
+}
+
 #[derive(Default)]
 pub struct Config{
     pub board_setting: BoardSetting,
     pub allow_marks: AllowMarks,
+    pub zoom_ratio: ZoomRatio,
 }
 
 impl Config {

@@ -13,6 +13,7 @@ use std::cell::RefCell;
 use std::marker::PhantomData;
 
 #[allow(dead_code)]
+#[allow(non_upper_case_globals)]
 pub(crate) mod resources {
     pub const IDC_MYICON: isize = 2;
     pub const IDD_CHARLESMINE_DIALOG: isize = 102;
@@ -50,7 +51,10 @@ pub(crate) mod resources {
     pub const IDM_ADVANCED_RECORD_RECORD: isize = 164;
     pub const IDM_ADVANCED_RECORD_PLAY: isize = 166;
     pub const IDM_ADVANCED_RECORD_STOP: isize = 167;
-    pub const IDM_HELP_ABOUT: isize = 171;
+    pub const IDM_ADVANCED_ZOOM_1x: isize = 170;
+    pub const IDM_ADVANCED_ZOOM_2x: isize = 171;
+    pub const IDM_ADVANCED_ZOOM_3x: isize = 172;
+    pub const IDM_HELP_ABOUT: isize = 199;
     pub const IDD_ABOUTBOX: isize = 201;
     pub const IDD_CUSTOM_GAME: isize = 202;
     pub const IDD_HERO_NAME: isize = 203;

@@ -35,7 +35,7 @@ use apiw::application_support_functions::SaveFileDialogFlags;
 pub fn ui_alert(msg: &str) {
     MessageBoxBuilder::new()
         .message(msg)
-        .invoke();
+        .invoke().unwrap();
 }
 
 pub struct Ui;
@@ -55,7 +55,7 @@ impl Ui {
         Self::create_main_window()?;
 
         THE_GAME.with(|game| {
-            let mut game = game.try_borrow_mut().or_else(|_| apiw::last_error())?;
+            let mut game = game.try_borrow_mut().or_else(|_| apiw::Error::last())?;
             let game = &mut *game;
             game.mvc.process_input(ControllerInput::Initialize);
             Ok(())
@@ -144,7 +144,7 @@ BOOL HandleMapFile(bool bSave, UINT nFilterResID, LPCTSTR lpszDefExt, LPTSTR lps
             request
                 .route_create(|window: &ForeignWindow, _| -> apiw::Result<bool> {
                     THE_GAME.with(|game| {
-                        let mut game = game.try_borrow_mut().or_else(|_| apiw::last_error())?;
+                        let mut game = game.try_borrow_mut().or_else(|_| apiw::Error::last())?;
                         let game = &mut *game;
                         game.mvc.redirect_output_target(Some(window.clone()));
                         window.invalidate()?;
@@ -156,7 +156,7 @@ BOOL HandleMapFile(bool bSave, UINT nFilterResID, LPCTSTR lpszDefExt, LPTSTR lps
                     let mut paint_dc = window.do_paint()?;
 
                     THE_GAME.with(|game| {
-                        let game = game.try_borrow().or_else(|_| apiw::last_error())?;
+                        let game = game.try_borrow().or_else(|_| apiw::Error::last())?;
                         game.mvc.sync_output_with_parameter(&mut paint_dc);
                         Ok(())
                     })?;
@@ -168,7 +168,7 @@ BOOL HandleMapFile(bool bSave, UINT nFilterResID, LPCTSTR lpszDefExt, LPTSTR lps
                         THE_GAME.with(|game| {
                             use apiw::windows_subsystem::window::MouseEventArgType;
 
-                            let mut game = game.try_borrow_mut().or_else(|_| apiw::last_error())?;
+                            let mut game = game.try_borrow_mut().or_else(|_| apiw::Error::last())?;
                             let game = &mut *game;
 
                             let mut target = None;
@@ -213,7 +213,7 @@ BOOL HandleMapFile(bool bSave, UINT nFilterResID, LPCTSTR lpszDefExt, LPTSTR lps
                     match args.id() as isize {
                         resources::IDM_FILE_NEW => {
                             THE_GAME.with(|game| {
-                                let mut game = game.try_borrow_mut().or_else(|_| apiw::last_error())?;
+                                let mut game = game.try_borrow_mut().or_else(|_| apiw::Error::last())?;
                                 let game = &mut *game;
                                 game.mvc.process_input(ControllerInput::ModelCommand(
                                     ModelCommand::NewGame));
@@ -222,7 +222,7 @@ BOOL HandleMapFile(bool bSave, UINT nFilterResID, LPCTSTR lpszDefExt, LPTSTR lps
                         }
                         resources::IDM_FILE_GAME_EASY | resources::IDM_FILE_GAME_MEDIUM | resources::IDM_FILE_GAME_HARD => {
                             THE_GAME.with(|game| {
-                                let mut game = game.try_borrow_mut().or_else(|_| apiw::last_error())?;
+                                let mut game = game.try_borrow_mut().or_else(|_| apiw::Error::last())?;
                                 let game = &mut *game;
                                 let boardsetting = match args.id() as isize {
                                     resources::IDM_FILE_GAME_EASY => model_config::BoardSetting::EASY,
@@ -237,21 +237,38 @@ BOOL HandleMapFile(bool bSave, UINT nFilterResID, LPCTSTR lpszDefExt, LPTSTR lps
                         }
                         resources::IDM_FILE_MARK => {
                             THE_GAME.with(|game| {
-                                let mut game = game.try_borrow_mut().or_else(|_| apiw::last_error())?;
+                                let mut game = game.try_borrow_mut().or_else(|_| apiw::Error::last())?;
                                 let game = &mut *game;
 
                                 game.mvc.process_input(ControllerInput::ModelCommand(
                                     ModelCommand::ToggleAllowMarks));
                                 Ok(())
                             })?;
-                        }
+                        },
+                        resources::IDM_ADVANCED_ZOOM_1x | resources::IDM_ADVANCED_ZOOM_2x | resources::IDM_ADVANCED_ZOOM_3x => {
+                            THE_GAME.with(|game| {
+                                let mut game = game.try_borrow_mut().or_else(|_| apiw::Error::last())?;
+                                let game = &mut *game;
+
+                                game.mvc.process_input(ControllerInput::ModelCommand(
+                                    ModelCommand::UpdateZoomRatio(
+                                        match args.id() as isize {
+                                            resources::IDM_ADVANCED_ZOOM_1x => model_config::ZoomRatio::Zoom1x,
+                                            resources::IDM_ADVANCED_ZOOM_2x => model_config::ZoomRatio::Zoom2x,
+                                            resources::IDM_ADVANCED_ZOOM_3x => model_config::ZoomRatio::Zoom3x,
+                                            _ => unreachable!(),
+                                        }
+                                    )));
+                                Ok(())
+                            })?;
+                        },
                         resources::IDM_FILE_EXIT => {
                             window.destroy()?;
                         },
                         resources::IDM_ADVANCED_LOADMAP => {
                             if let Some(path) = Ui::call_open_file_dialog(window, 0, "cmm") {
                                 THE_GAME.with(|game| {
-                                    let mut game = game.try_borrow_mut().or_else(|_| apiw::last_error())?;
+                                    let mut game = game.try_borrow_mut().or_else(|_| apiw::Error::last())?;
                                     let game = &mut *game;
 
                                     game.mvc.process_input(ControllerInput::ModelCommand(
@@ -263,7 +280,7 @@ BOOL HandleMapFile(bool bSave, UINT nFilterResID, LPCTSTR lpszDefExt, LPTSTR lps
                         resources::IDM_ADVANCED_SAVEMAP => {
                             if let Some(path) = Ui::call_save_file_dialog(window, 0, "cmm") {
                                 THE_GAME.with(|game| {
-                                    let mut game = game.try_borrow_mut().or_else(|_| apiw::last_error())?;
+                                    let mut game = game.try_borrow_mut().or_else(|_| apiw::Error::last())?;
                                     let game = &mut *game;
 
                                     game.mvc.process_input(ControllerInput::ModelCommand(
@@ -274,7 +291,7 @@ BOOL HandleMapFile(bool bSave, UINT nFilterResID, LPCTSTR lpszDefExt, LPTSTR lps
                         },
                         resources::IDM_ADVANCED_RESTART => {
                             THE_GAME.with(|game| {
-                                let mut game = game.try_borrow_mut().or_else(|_| apiw::last_error())?;
+                                let mut game = game.try_borrow_mut().or_else(|_| apiw::Error::last())?;
                                 let game = &mut *game;
 
                                 game.mvc.process_input(ControllerInput::ModelCommand(

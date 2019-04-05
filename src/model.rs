@@ -615,6 +615,8 @@ pub enum ModelCommand {
 
     ToggleAllowMarks,
 
+    UpdateZoomRatio(model_config::ZoomRatio),
+
     SaveMap(PathBuf),
     LoadMap(PathBuf),
     RestartGame,
@@ -737,6 +739,14 @@ impl ::domino::mvc::Model<view::View, controller::Controller> for Model {
                         model.config.allow_marks = model_config::AllowMarks(new_state);
                     }
                     token.update_view_next(ViewCommand::UpdateUIAllowMarks(model_config::AllowMarks(new_state)));
+                }
+                ModelCommand::UpdateZoomRatio(r) => {
+                    {
+                        let model = token.model_mut();
+                        model.config.zoom_ratio = r;
+                    }
+                    token.update_view_next(ViewCommand::UpdateZoomRatio(r));
+                    token.update_view_next(ViewCommand::UpdateUIZoomRatio(r));
                 }
                 ModelCommand::EffectNewGameButtonDown => {
                     token.update_view_next(ViewCommand::SetButtonPressed(true));

@@ -1,6 +1,7 @@
 use model::BlockShape;
 use model::GameButtonDisplayKind;
 use std::cell::Cell;
+use std::num::NonZeroUsize;
 use model_config::{self, Config};
 use view_assets::{self};
 use view_assets::BlockSpriteSheet;
@@ -275,11 +276,69 @@ impl LayoutState {
     }
 }
 
+struct LayoutZoom {
+    ratio: NonZeroUsize,
+}
+
+impl LayoutZoom {
+    fn new() -> Self {
+        Self::new_with_ratio(1)
+    }
+
+    fn new_with_ratio(v: usize) -> Self {
+        LayoutZoom {
+            ratio: NonZeroUsize::new(v).unwrap()
+        }
+    }
+    fn update_dc(&self, dc: &mut UiScopedDC) -> UiResult<()> {
+        use apiw::extensions::draw_ext::{GraphicsMode, Transform};
+        let v = self.ratio.get();
+        if v == 1 {
+            return Ok(());
+        }
+        let v = v as f32;
+        dc.set_graphics_mode(GraphicsMode::ADVANCED)?;
+        dc.set_world_transform(&Transform::new_with_values(&[
+            v, 0.0, 0.0, v, 0.0, 0.0
+        ]))?;
+
+        Ok(())
+    }
+
+    fn zoom_size(&self, size: Size) -> Size {
+        let v = self.ratio.get();
+        if v == 1 {
+            return size;
+        }
+        Size::new(size.cx() * v, size.cy() * v)
+    }
+
+    fn unzoom_point(&self, point: Point) -> Point {
+        let v = self.ratio.get();
+        if v == 1 {
+            return point;
+        }
+        Point::new(point.x() / v as isize, point.y() / v as isize)
+    }
+}
+
+impl From<model_config::ZoomRatio> for LayoutZoom {
+    fn from(r: model_config::ZoomRatio) -> Self {
+        match r {
+            model_config::ZoomRatio::Zoom1x => Self::new_with_ratio(1),
+            model_config::ZoomRatio::Zoom2x => Self::new_with_ratio(2),
+            model_config::ZoomRatio::Zoom3x => Self::new_with_ratio(3),
+        }
+    }
+}
+
+
 pub struct View {
     assets: Assets,
     window: Option<ui::UiWindow>,
     layout_data: LayoutData,
     layout_state: LayoutState,
+    layout_zoom: LayoutZoom,
 }
 
 impl View {
@@ -288,14 +347,22 @@ impl View {
         let block_area_dims = model.size();
         let layout_data = LayoutData::new(block_area_dims);
         let layout_state= LayoutState::new();
+        let layout_zoom = LayoutZoom::new();
 
         View {
             assets,
             layout_data,
             layout_state,
+            layout_zoom,
 
             window: None,
         }
+    }
+
+    pub fn update_zoom_ratio(&mut self, ratio: model_config::ZoomRatio) -> UiResult<()> {
+        self.layout_zoom = LayoutZoom::from(ratio);
+        self.adjust_window_layout().unwrap();
+        Ok(())
     }
 
     pub fn regenerate_layout_data(&mut self, (y, x): (usize, usize)) {
@@ -303,12 +370,14 @@ impl View {
     }
 
     pub fn draw(&self, dc: &mut UiScopedDC, model: &Model, assets: &Assets) -> UiResult<()> {
-        dc.draw(ThreeDimBorder {
-            rect: Rect::new(Point::ORIGIN, self.layout_data.area_size),
-            border_pos: BorderPosition::Inner,
-            color_nw: RGBColor::WHITE,
-            color_se: RGBColor::GRAY,
-        })?
+        self.layout_zoom.update_dc(dc)?;
+        dc
+            .draw(ThreeDimBorder {
+                rect: Rect::new(Point::ORIGIN, self.layout_data.area_size),
+                border_pos: BorderPosition::Inner,
+                color_nw: RGBColor::WHITE,
+                color_se: RGBColor::GRAY,
+            })?
             .draw(ThreeDimBorder {
                 rect: Rect::new(
                     Point::new(LayoutData::BLOCK_AREA_X as _, LayoutData::BUTTONEDGE_TOP as _),
@@ -361,6 +430,7 @@ impl View {
     }
 
     pub fn hit_test(&self, point: Point) -> GameTarget {
+        let point = self.layout_zoom.unzoom_point(point);
         let button_size = Size::new(
             GameButtonSpriteSheet::BUTTON_WIDTH,
             GameButtonSpriteSheet::BUTTON_HEIGHT,
@@ -452,8 +522,10 @@ impl View {
 #[derive(Debug)]
 pub enum ViewCommand {
     Initialize,
+    UpdateZoomRatio(model_config::ZoomRatio),
     UpdateUIBoardSetting(model_config::BoardSetting),
     UpdateUIAllowMarks(model_config::AllowMarks),
+    UpdateUIZoomRatio(model_config::ZoomRatio),
     UpdateUIGameMode(model_gamemode::GameMode),
     SetButtonPressed(bool),
     SetBlockPressed(usize, usize, bool),
@@ -480,10 +552,19 @@ impl ::domino::mvc::View<model::Model, controller::Controller> for View {
                 ViewCommand::Initialize => {
                     let allow_marks = token.model().config().allow_marks.clone();
                     token.exec_command_next(ViewCommand::UpdateUIAllowMarks(allow_marks));
+                    let zoom_ratio = token.model().config().zoom_ratio.clone();
+                    token.exec_command_next(ViewCommand::UpdateUIZoomRatio(zoom_ratio));
                     let board_setting = token.model().config().board_setting.clone();
                     token.exec_command_next(ViewCommand::UpdateUIBoardSetting(board_setting));
                     let game_mode = token.model().game_mode();
                     token.exec_command_next(ViewCommand::UpdateUIGameMode(game_mode));
+                },
+                ViewCommand::UpdateZoomRatio(v) => {
+                    let view = token.view_mut();
+                    view.update_zoom_ratio(v)?;
+                    if let Some(window) = view.window() {
+                        window.invalidate()?;
+                    }
                 },
                 ViewCommand::UpdateUIBoardSetting(v) => {
                     let view = token.view_mut();
@@ -513,6 +594,22 @@ impl ::domino::mvc::View<model::Model, controller::Controller> for View {
                             let _ = menu
                                 .item_by_command(view_assets::resources::IDM_FILE_MARK as _)
                                 .set_checked(v.0);
+                        }
+                    }
+                },
+                ViewCommand::UpdateUIZoomRatio(v) => {
+                    let view = token.view_mut();
+                    if let Some(window) = view.window() {
+                        if let Some(mut menu) = window.menu().unwrap_or(None) {
+                            for &(e, menu_item) in &[
+                                (model_config::ZoomRatio::Zoom1x, view_assets::resources::IDM_ADVANCED_ZOOM_1x),
+                                (model_config::ZoomRatio::Zoom2x, view_assets::resources::IDM_ADVANCED_ZOOM_2x),
+                                (model_config::ZoomRatio::Zoom3x, view_assets::resources::IDM_ADVANCED_ZOOM_3x),
+                                ] {
+                                let _ = menu
+                                    .item_by_command(menu_item as _)
+                                    .set_checked(v == e);
+                            }
                         }
                     }
                 },
@@ -602,7 +699,7 @@ impl ::domino::mvc::View<model::Model, controller::Controller> for View {
 impl View {
     fn adjust_window_layout(&self) -> UiResult<()> {
         if let Some(window) = self.window() {
-            let rect = Rect::new(Point::ORIGIN, self.layout_data.area_size);
+            let rect = Rect::new(Point::ORIGIN, self.layout_zoom.zoom_size(self.layout_data.area_size));
             let new_rect = UiWindow::predict_window_rect_from_client_rect_and_window(rect, window)?;
             window.reposition_set_size(new_rect.size())?;
             window.invalidate_and_erase()?;

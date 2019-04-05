@@ -8,13 +8,13 @@ authors = ["CrLF0710 <crlf0710@gmail.com>"]
 apiw = { git = "https://github.com/crlf0710/apiw-rs" }
 concerto = { git = "https://github.com/crlf0710/concerto-rs" }
 domino = { git = "https://github.com/crlf0710/domino-rs" }
-rand = "0.5"
+rand = "0.6"
 chrono = "0.4"
 clamp = "0.1"
 smallvec = "0.6"
 log = "0.4"
-env_logger = "0.5"
+env_logger = "0.6"
 
 
 [target.'cfg(windows)'.build-dependencies]
-embed-resource = "1"
+embed-resource = { git = "https://github.com/nabijaczleweli/rust-embed-resource" }

@@ -115,6 +115,10 @@ BEGIN
         MENUITEM "Start R&ecording",                    IDM_ADVANCED_RECORD_RECORD
         MENUITEM "Start &Playback",                    IDM_ADVANCED_RECORD_PLAY
         MENUITEM "S&top Recording/Playback\tF12",                 IDM_ADVANCED_RECORD_STOP
+        MENUITEM SEPARATOR
+        MENUITEM "Zoom 1x"                        IDM_ADVANCED_ZOOM_1x
+        MENUITEM "Zoom 2x"                        IDM_ADVANCED_ZOOM_2x
+        MENUITEM "Zoom 3x"                        IDM_ADVANCED_ZOOM_3x
     END
     POPUP "&Help"
     BEGIN
@@ -208,6 +212,10 @@ BEGIN
         MENUITEM "开始录像(&E)",                    IDM_ADVANCED_RECORD_RECORD
         MENUITEM "开始回放(&P)",                    IDM_ADVANCED_RECORD_PLAY
         MENUITEM "停止(&T)\tF12",                 IDM_ADVANCED_RECORD_STOP
+        MENUITEM SEPARATOR
+        MENUITEM "缩放 1x"                        IDM_ADVANCED_ZOOM_1x
+        MENUITEM "缩放 2x"                        IDM_ADVANCED_ZOOM_2x
+        MENUITEM "缩放 3x"                        IDM_ADVANCED_ZOOM_3x
     END
     POPUP "帮助(&H)"
     BEGIN

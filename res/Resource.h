@@ -38,7 +38,10 @@
 #define IDM_ADVANCED_RECORD_RECORD      164
 #define IDM_ADVANCED_RECORD_PLAY        166
 #define IDM_ADVANCED_RECORD_STOP        167
-#define IDM_HELP_ABOUT                  171
+#define IDM_ADVANCED_ZOOM_1x            170
+#define IDM_ADVANCED_ZOOM_2x            171
+#define IDM_ADVANCED_ZOOM_3x            172
+#define IDM_HELP_ABOUT                  199
 #define IDD_ABOUTBOX                    201
 #define IDD_CUSTOM_GAME                 202
 #define IDD_HERO_NAME                   203
