@@ -1,10 +1,12 @@
+#![allow(unused_imports, unreachable_code, unused_variables, dead_code)]
+
 use chrono::{DateTime, Local};
 use std::fs::File;
 use std::path::Path;
 use std::rc::Rc;
 use std::cell::RefCell;
-use model::ModelCommand;
-use model::Board;
+use crate::model::ModelCommand;
+use crate::model::Board;
 
 #[derive(Clone, Debug)]
 pub struct BoardSaved {

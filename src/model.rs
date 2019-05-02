@@ -4,15 +4,15 @@ use chrono::{DateTime, Local};
 use rand::{self, distributions::Uniform, Rng};
 
 use std::ops;
-use view::{self, ViewCommand};
-use controller;
-use model_config::{self, Config};
-use model_gamemode::{self, BoardSaved, GameMode};
+use crate::view::{self, ViewCommand};
+use crate::controller;
+use crate::model_config::{self, Config};
+use crate::model_gamemode::{self, BoardSaved, GameMode};
 use std::cell::Cell;
 use std::rc::Rc;
 use std::collections::BTreeSet;
 use std::path::PathBuf;
-use view::AlertFailure;
+use crate::view::AlertFailure;
 
 #[derive(Copy, Clone, PartialEq, Eq, Debug)]
 pub enum BlockStatus {

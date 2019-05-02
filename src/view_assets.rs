@@ -5,9 +5,9 @@ use apiw::graphics_subsystem::RGBColor;
 use apiw::graphics_subsystem::TenaryROP;
 use apiw::graphics_subsystem::{Point, Size};
 use apiw::shared::ManagedStrategy;
-use model::Block;
-use model::BlockShape;
-use smallvec::SmallVec;
+use crate::model::Block;
+use crate::model::BlockShape;
+use smallvec::{smallvec, SmallVec};
 use std::borrow::BorrowMut;
 use std::cell::RefCell;
 use std::marker::PhantomData;
@@ -89,9 +89,9 @@ pub(crate) mod resources {
 }
 
 use self::resources::*;
-use model::BlockDisplayKind;
-use model::Board;
-use model::GameButtonDisplayKind;
+use crate::model::BlockDisplayKind;
+use crate::model::Board;
+use crate::model::GameButtonDisplayKind;
 
 pub struct SpriteSheetInstance<
     'a,

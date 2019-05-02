@@ -2,7 +2,7 @@
 name = "charlesmine"
 version = "0.1.0"
 authors = ["CrLF0710 <crlf0710@gmail.com>"]
-# edition = "2018"
+edition = "2018"
 
 [dependencies]
 apiw = { git = "https://github.com/crlf0710/apiw-rs" }
@@ -17,4 +17,5 @@ env_logger = "0.6"
 
 
 [target.'cfg(windows)'.build-dependencies]
-embed-resource = { git = "https://github.com/nabijaczleweli/rust-embed-resource" }
+# resw = { git = "https://github.com/crlf0710/resw-rs" }
+embed-resource = "1"

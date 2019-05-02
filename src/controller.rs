@@ -4,9 +4,9 @@ use apiw::graphics_subsystem::Size;
 use apiw::windows_subsystem::window::MouseEventArgs;
 use concerto::ActionContextBuilder;
 use concerto::{self, ActionContext};
-use view::{self, View, GameTarget};
-use model::{self, Model, ModelCommand};
-use model_config::{self, Config};
+use crate::view::{self, View, GameTarget};
+use crate::model::{self, Model, ModelCommand};
+use crate::model_config::{self, Config};
 
 pub struct Controller {
     action_contexts: Vec<ActionContext<Controller>>,

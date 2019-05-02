@@ -1,18 +1,21 @@
+#![allow(unused_imports, unreachable_code, unused_variables, dead_code)]
+
 use apiw;
 use apiw::shared::ManagedStrategy;
 use apiw::Result;
 
-use Game;
-use THE_GAME;
+use crate::Game;
+use crate::THE_GAME;
 
-use view;
-use view_assets::{self};
-use model;
-use controller::{self, ControllerInput};
-use view::ViewCommand;
+use crate::view;
+use crate::view_assets::{self};
+use crate::model;
+use crate::controller::{self, ControllerInput};
+use crate::view::ViewCommand;
 use domino::mvc::ViewToken;
+use apiw::window_proc;
+use apiw::timer_proc;
 use apiw::application_support_functions::MessageBoxBuilder;
-
 
 pub type UiWindow = apiw::windows_subsystem::window::ForeignWindow;
 pub type UiScopedDC<'a> = apiw::graphics_subsystem::device_context::ScopedDeviceContext<'a>;
@@ -25,7 +28,7 @@ pub type Rect = apiw::graphics_subsystem::Rect;
 pub type RGBColor = apiw::graphics_subsystem::RGBColor;
 
 pub use apiw::graphics_subsystem::draw::Draw as UiDraw;
-use model_config;
+use crate::model_config;
 use std::path::PathBuf;
 use apiw::application_support_functions::OpenFileDialogBuilder;
 use apiw::application_support_functions::OpenFileDialogFlags;
@@ -177,7 +180,7 @@ BOOL HandleMapFile(bool bSave, UINT nFilterResID, LPCTSTR lpszDefExt, LPTSTR lps
                             }
 
                             use concerto::ActionInput;
-                            use controller::KeyKind;
+                            use crate::controller::KeyKind;
 
                             if let Some(target) = target.as_ref() {
                                 game.mvc.process_input(ControllerInput::ActionInput(
@@ -208,8 +211,8 @@ BOOL HandleMapFile(bool bSave, UINT nFilterResID, LPCTSTR lpszDefExt, LPTSTR lps
                     },
                 )
                 .route_command(|window: &ForeignWindow, args: CommandEventArgs| -> apiw::Result<()> {
-                    use view_assets::resources;
-                    use model::ModelCommand;
+                    use crate::view_assets::resources;
+                    use crate::model::ModelCommand;
                     match args.id() as isize {
                         resources::IDM_FILE_NEW => {
                             THE_GAME.with(|game| {

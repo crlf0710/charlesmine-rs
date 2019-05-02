@@ -1,27 +1,27 @@
-use model::BlockShape;
-use model::GameButtonDisplayKind;
+use crate::model::BlockShape;
+use crate::model::GameButtonDisplayKind;
 use std::cell::Cell;
 use std::num::NonZeroUsize;
-use model_config::{self, Config};
-use view_assets::{self};
-use view_assets::BlockSpriteSheet;
-use view_assets::GameButtonSpriteSheet;
-use view_assets::{Assets, DigitSpriteSheet};
-use model::Block;
-use model::BlockDisplayKind;
-use model::Board;
-use model::Model;
-use model_config::BoardSettingKind;
-use model;
-use controller;
-use ui::{self, Size, Point, Rect, RGBColor};
-use ui::UiResult;
-use ui::UiScopedDC;
-use ui::UiWindow;
-use ui::UiLocalDC;
-use ui::UiDraw;
-use model_gamemode;
-use ui::ui_alert;
+use crate::model_config::{self, Config};
+use crate::view_assets::{self};
+use crate::view_assets::BlockSpriteSheet;
+use crate::view_assets::GameButtonSpriteSheet;
+use crate::view_assets::{Assets, DigitSpriteSheet};
+use crate::model::Block;
+use crate::model::BlockDisplayKind;
+use crate::model::Board;
+use crate::model::Model;
+use crate::model_config::BoardSettingKind;
+use crate::model;
+use crate::controller;
+use crate::ui::{self, Size, Point, Rect, RGBColor};
+use crate::ui::UiResult;
+use crate::ui::UiScopedDC;
+use crate::ui::UiWindow;
+use crate::ui::UiLocalDC;
+use crate::ui::UiDraw;
+use crate::model_gamemode;
+use crate::ui::ui_alert;
 
 #[derive(Debug)]
 pub enum AlertFailure {
@@ -157,7 +157,7 @@ impl UiDraw for ThreeDimBorder {
 
 impl<'a> UiDraw for GameButton<'a> {
     fn draw(self, dc: &mut UiScopedDC) -> UiResult<()> {
-        use view_assets::SpriteSheet;
+        use crate::view_assets::SpriteSheet;
 
         let mut game_button_sheet = self.assets.gamebutton_sheet.instantiate(dc)?;
         let sprite_idx = GameButtonSpriteSheet::sprite_index(self.state);
@@ -170,7 +170,7 @@ impl<'a> UiDraw for GameButton<'a> {
 
 impl<'a> UiDraw for MineBlock<'a> {
     fn draw(self, dc: &mut UiScopedDC) -> UiResult<()> {
-        use view_assets::SpriteSheet;
+        use crate::view_assets::SpriteSheet;
 
         let mut block_sheet = self.assets.block_sheet.instantiate(dc)?;
         let sprite_idx =
@@ -184,7 +184,7 @@ impl<'a> UiDraw for MineBlock<'a> {
 
 impl<'a> UiDraw for DigitPanel<'a> {
     fn draw(self, dc: &mut UiScopedDC) -> UiResult<()> {
-        use view_assets::SpriteSheet;
+        use crate::view_assets::SpriteSheet;
 
         let value_abs = self.value.abs() as usize;
         let neg = self.value.is_negative();

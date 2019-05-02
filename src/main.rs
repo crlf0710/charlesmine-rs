@@ -1,21 +1,8 @@
 #![windows_subsystem = "windows"]
-#![allow(unused_imports, unreachable_code)]
-
-#[macro_use]
-extern crate apiw;
-extern crate chrono;
-extern crate clamp;
-extern crate rand;
-#[macro_use]
-extern crate smallvec;
-extern crate concerto;
-extern crate domino;
-#[macro_use]
-extern crate log;
-extern crate env_logger;
+#![allow(unused_imports, unreachable_code, unused_variables, dead_code)]
 
 use std::cell::RefCell;
-use ui::Ui;
+use crate::ui::Ui;
 
 mod model;
 mod model_config;
@@ -49,7 +36,7 @@ thread_local! {
 }
 
 fn main() -> apiw::Result<()> {
-    use view::View;
+    use crate::view::View;
 
     env_logger::init();
 
