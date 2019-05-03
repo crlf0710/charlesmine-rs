@@ -15,7 +15,5 @@ smallvec = "0.6"
 log = "0.4"
 env_logger = "0.6"
 
-
 [target.'cfg(windows)'.build-dependencies]
-# resw = { git = "https://github.com/crlf0710/resw-rs" }
-embed-resource = "1"
+resw = { git = "https://github.com/crlf0710/resw-rs" }
