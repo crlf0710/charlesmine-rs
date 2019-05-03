@@ -13,12 +13,13 @@ a consistentency between the two environments. ([Here are some notes about this 
 and also see [this bug](https://github.com/rust-lang/rust/issues/53454)).
 
 ## MSVC builds
-Theorically nothing should need to be done. However to workaround [this bug](https://github.com/nabijaczleweli/rust-embed-resource/issues/11),
-you have to build under "Visual Studio Command Prompt", or run `vcvarsall.bat` manually before you invoke cargo to build the project.
+Currently there's nothing to do.
 
 # Dependencies
-Some dependency projects are built alongside with this project. Most noticably, [APIW-rs](https://github.com/crlf0710/apiw-rs),
-which aims to grow into a cross-platform GUI crate in a distant future. They're currently at a internal development stage, and seldomly documented.
+Some dependency projects are built alongside with this project. Most noticably, 
+[APIW-rs](https://github.com/crlf0710/apiw-rs), which aims to grow into a cross-platform GUI crate in a distant future. 
+There's also [RESW-rs](https://github.com/crlf0710/resw-rs), which a resource builder that can generate .rc files and
+link them from build.rs rust code. They're currently at a internal development stage, and seldomly documented.
 Please contact me if you're interested in any of them.
 
 

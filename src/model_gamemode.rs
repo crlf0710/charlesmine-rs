@@ -1,12 +1,12 @@
 #![allow(unused_imports, unreachable_code, unused_variables, dead_code)]
 
+use crate::model::Board;
+use crate::model::ModelCommand;
 use chrono::{DateTime, Local};
+use std::cell::RefCell;
 use std::fs::File;
 use std::path::Path;
 use std::rc::Rc;
-use std::cell::RefCell;
-use crate::model::ModelCommand;
-use crate::model::Board;
 
 #[derive(Clone, Debug)]
 pub struct BoardSaved {
@@ -17,15 +17,17 @@ pub struct BoardSaved {
 impl BoardSaved {
     pub fn import_from_board(board: &mut Board) -> Self {
         let board_size = board.size();
-        let mine_pos =
-            if let Some(mine_pos) = board.fixed_mine_pos_list().cloned() {
-                mine_pos
-            } else {
-                let mine_pos_list = Rc::new(
-                    board.snapshot_mine_pos_list().unwrap_or_else(|| board.allocate_mine_pos_list(None)));
-                board.update_fixed_mine_pos_list(Some(mine_pos_list.clone()));
-                mine_pos_list
-            };
+        let mine_pos = if let Some(mine_pos) = board.fixed_mine_pos_list().cloned() {
+            mine_pos
+        } else {
+            let mine_pos_list = Rc::new(
+                board
+                    .snapshot_mine_pos_list()
+                    .unwrap_or_else(|| board.allocate_mine_pos_list(None)),
+            );
+            board.update_fixed_mine_pos_list(Some(mine_pos_list.clone()));
+            mine_pos_list
+        };
         BoardSaved {
             board_size,
             mine_pos,
@@ -87,4 +89,3 @@ impl GameMode {
         }
     }
 }
-

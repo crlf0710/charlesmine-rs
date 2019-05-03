@@ -1,17 +1,17 @@
 #![windows_subsystem = "windows"]
 #![allow(unused_imports, unreachable_code, unused_variables, dead_code)]
 
-use std::cell::RefCell;
 use crate::ui::Ui;
+use std::cell::RefCell;
 
+mod controller;
 mod model;
 mod model_config;
 mod model_gamemode;
-mod view;
-mod view_assets;
 #[path = "ui_apiw.rs"]
 mod ui;
-mod controller;
+mod view;
+mod view_assets;
 
 type GameMVC = domino::mvc::MVCSystem<model::Model, view::View, controller::Controller>;
 
@@ -25,9 +25,7 @@ impl Game {
         let view = view::View::new(&model);
         let controller = controller::Controller::new(&model);
         let mvc = GameMVC::new(model, view, controller);
-        Game {
-            mvc,
-        }
+        Game { mvc }
     }
 }
 

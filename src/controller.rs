@@ -1,12 +1,12 @@
+use crate::model::{self, Model, ModelCommand};
+use crate::model_config::{self, Config};
+use crate::view::{self, GameTarget, View};
 use apiw::graphics_subsystem::Point;
 use apiw::graphics_subsystem::Rect;
 use apiw::graphics_subsystem::Size;
 use apiw::windows_subsystem::window::MouseEventArgs;
 use concerto::ActionContextBuilder;
 use concerto::{self, ActionContext};
-use crate::view::{self, View, GameTarget};
-use crate::model::{self, Model, ModelCommand};
-use crate::model_config::{self, Config};
 
 pub struct Controller {
     action_contexts: Vec<ActionContext<Controller>>,
@@ -149,10 +149,7 @@ impl Controller {
             .add_recipe(|recipe_builder| {
                 recipe_builder
                     .add_key_down_input(KeyKind::LButton)
-                    .issue_effect(
-                        ModelCommand::EffectCapture,
-                        ModelCommand::EffectUnCapture,
-                    )
+                    .issue_effect(ModelCommand::EffectCapture, ModelCommand::EffectUnCapture)
                     .add_key_up_input(KeyKind::LButton)
                     .build()
             })
@@ -191,7 +188,7 @@ impl ::domino::mvc::Controller<model::Model, view::View> for Controller {
                 for model_command in new_commands {
                     token.manipulate_model_next(model_command);
                 }
-            },
+            }
             ControllerInput::ModelCommand(model_command) => {
                 token.manipulate_model_next(model_command);
             }

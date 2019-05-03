@@ -2,7 +2,6 @@ use clamp::clamp;
 use std::cell::RefCell;
 use std::rc::Rc;
 
-
 #[derive(Copy, Clone, PartialEq, Debug)]
 pub enum BoardSettingKind {
     Easy,
@@ -43,7 +42,12 @@ impl BoardSetting {
         x = clamp(Self::EASY.x, x, Self::HARD.x);
         y = clamp(Self::EASY.y, y, Self::HARD.y);
         c = clamp(Self::EASY.c, c, (x - 1) * (y - 1));
-        BoardSetting { x, y, c, k: BoardSettingKind::Custom }
+        BoardSetting {
+            x,
+            y,
+            c,
+            k: BoardSettingKind::Custom,
+        }
     }
 }
 
@@ -76,7 +80,7 @@ impl Default for ZoomRatio {
 }
 
 #[derive(Default)]
-pub struct Config{
+pub struct Config {
     pub board_setting: BoardSetting,
     pub allow_marks: AllowMarks,
     pub zoom_ratio: ZoomRatio,

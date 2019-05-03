@@ -3,16 +3,16 @@
 use chrono::{DateTime, Local};
 use rand::{self, distributions::Uniform, Rng};
 
-use std::ops;
-use crate::view::{self, ViewCommand};
 use crate::controller;
 use crate::model_config::{self, Config};
 use crate::model_gamemode::{self, BoardSaved, GameMode};
-use std::cell::Cell;
-use std::rc::Rc;
-use std::collections::BTreeSet;
-use std::path::PathBuf;
 use crate::view::AlertFailure;
+use crate::view::{self, ViewCommand};
+use std::cell::Cell;
+use std::collections::BTreeSet;
+use std::ops;
+use std::path::PathBuf;
+use std::rc::Rc;
 
 #[derive(Copy, Clone, PartialEq, Eq, Debug)]
 pub enum BlockStatus {
@@ -152,8 +152,7 @@ impl Board {
         };
         let mut rng = rand::thread_rng();
         let mut result = Vec::new();
-        for mine_idx in Rng::sample_iter(&mut rng, &Uniform::new_inclusive(0, mapsize - 1))
-        {
+        for mine_idx in Rng::sample_iter(&mut rng, &Uniform::new_inclusive(0, mapsize - 1)) {
             if exclude_set.replace(mine_idx).is_none() {
                 result.push(mine_idx);
             }
@@ -224,10 +223,12 @@ impl Board {
         let (y, x) = pos;
         let (check_y, check_x) = check;
         let shape = Self::block_shape(y, x);
-        if check_y == y || match shape {
-            BlockShape::DeltaLike => check_y == y + 1,
-            BlockShape::RevDeltaLike => check_y + 1 == y,
-        } {
+        if check_y == y
+            || match shape {
+                BlockShape::DeltaLike => check_y == y + 1,
+                BlockShape::RevDeltaLike => check_y + 1 == y,
+            }
+        {
             if check_x + 2 >= x && x + 2 >= check_x {
                 return true;
             }
@@ -322,8 +323,8 @@ impl Board {
         use std::collections::VecDeque;
 
         match self.status {
-            | BoardStatus::Finished(..) | BoardStatus::Died(..) => return,
-            | _ => {}
+            BoardStatus::Finished(..) | BoardStatus::Died(..) => return,
+            _ => {}
         };
 
         match self.block_status(y, x) {
@@ -432,8 +433,8 @@ impl Board {
     pub(crate) fn rotate_block_state(&mut self, y: usize, x: usize) {
         let idx = self.block_data_idx(y, x);
         match self.status {
-            | BoardStatus::Finished(..) | BoardStatus::Died(..) => return,
-            | _ => {}
+            BoardStatus::Finished(..) | BoardStatus::Died(..) => return,
+            _ => {}
         };
 
         match self.blocks[idx].status {
@@ -550,18 +551,24 @@ impl Board {
         }
     }
 
-    pub(crate) fn game_button_display_kind(&self, pressed: bool, captured: bool) -> GameButtonDisplayKind {
+    pub(crate) fn game_button_display_kind(
+        &self,
+        pressed: bool,
+        captured: bool,
+    ) -> GameButtonDisplayKind {
         if pressed {
             GameButtonDisplayKind::Pushed
         } else {
             match self.status {
                 BoardStatus::Finished(..) => GameButtonDisplayKind::Finished,
                 BoardStatus::Died(..) => GameButtonDisplayKind::Died,
-                _ => if captured {
-                    GameButtonDisplayKind::Danger
-                } else {
-                    GameButtonDisplayKind::Normal
-                },
+                _ => {
+                    if captured {
+                        GameButtonDisplayKind::Danger
+                    } else {
+                        GameButtonDisplayKind::Normal
+                    }
+                }
             }
         }
     }
@@ -581,7 +588,7 @@ impl Model {
 
         let board = {
             let board_setting = &config.board_setting;
-            let mut board= Board::new(board_setting.y, board_setting.x, board_setting.c);
+            let mut board = Board::new(board_setting.y, board_setting.x, board_setting.c);
             let allow_marks = &config.allow_marks;
             board.allow_marks = allow_marks.0;
             board
@@ -598,9 +605,10 @@ impl Model {
         &self.config
     }
 
-    pub fn game_mode(&self) -> GameMode { self.game_mode.clone() }
+    pub fn game_mode(&self) -> GameMode {
+        self.game_mode.clone()
+    }
 }
-
 
 #[derive(Clone, Debug)]
 pub enum ModelCommand {
@@ -653,131 +661,145 @@ impl ::domino::mvc::Model<view::View, controller::Controller> for Model {
     type Notification = view::ViewCommand;
 
     fn process_command(mut token: ModelToken, command: ModelCommand) {
-            match command {
-                ModelCommand::Initialize => {
-                    token.update_view_next(ViewCommand::Initialize);
-                },
-                ModelCommand::NewGameWithBoard(v) => {
-                    {
-                        let model = token.model_mut();
-                        model.board = Board::new(v.y, v.x, v.c);
-                    }
-                    token.update_view_next(
-                        ViewCommand::UpdateUIBoardSetting(v.clone()));
-                },
-                ModelCommand::NewGame => {
-                    let model = token.model_mut();
-                    let size = model.board.size();
-                    let count = model.board.goal_mark_count();
-                    model.board =  Board::new(size.0, size.1, count);
-                }
-                ModelCommand::LoadMap(path) => {
-                    let new_gamemode;
-                    {
-                        let board_saved = if let Some(board_saved) = BoardSaved::import_from_file(&path) {
-                            board_saved
-                        } else {
-                            token.update_view_next(ViewCommand::AlertFailure(AlertFailure::FileIOError));
-                            return;
-                        };
-                        let model = token.model_mut();
-                        model.board = Board::new(board_saved.board_size.0, board_saved.board_size.1, board_saved.mine_pos.len());
-                        model.fixed_mine_pos = Some(board_saved.mine_pos.clone());
-
-                        model.game_mode = GameMode::BoardPredefined(board_saved);
-                        new_gamemode = model.game_mode();
-                    }
-                    token.update_view_next(ViewCommand::UpdateUIGameMode(new_gamemode));
-                }
-                ModelCommand::SaveMap(path) => {
-                    let new_gamemode;
-                    {
-                        if !token.model_mut().game_mode.is_predefined() {
-                            let model = token.model_mut();
-                            let board_saved = BoardSaved::import_from_board(&mut model.board);
-                            model.game_mode = GameMode::BoardPredefined(board_saved);
-                        }
-                        new_gamemode = token.model_mut().game_mode();
-                        if !new_gamemode.board_saved().unwrap()
-                            .export_to_file(&path).is_err() {
-                            token.update_view_next(ViewCommand::AlertFailure(AlertFailure::FileIOError));
-                        }
-                    }
-                    token.update_view_next(ViewCommand::UpdateUIGameMode(new_gamemode));
-                }
-                ModelCommand::RestartGame => {
-                    let new_gamemode;
-                    {
-                        let model = token.model_mut();
-                        if !model.game_mode.is_predefined() {
-                            let board_saved = BoardSaved::import_from_board(&mut model.board);
-                            model.game_mode = GameMode::BoardPredefined(board_saved);
-                        }
-                        new_gamemode = model.game_mode();
-                        model.board = model.board.renew();
-                    }
-                    token.update_view_next(ViewCommand::UpdateUIGameMode(new_gamemode));
-                }
-                ModelCommand::OpenBlock(y, x) => {
-                    let model = token.model_mut();
-                    model.open_block(y, x);
-                }
-                ModelCommand::BlastBlock(y, x) => {
-                    let model = token.model_mut();
-                    model.blast_block(y, x);
-                }
-                ModelCommand::RotateBlockState(y, x) => {
-                    let model = token.model_mut();
-                    model.rotate_block_state(y, x);
-                }
-                ModelCommand::ToggleAllowMarks => {
-                    let new_state;
-                    {
-                        let model = token.model_mut();
-                        new_state = !model.config.allow_marks.0;
-                        model.board.set_allow_marks(new_state);
-                        model.config.allow_marks = model_config::AllowMarks(new_state);
-                    }
-                    token.update_view_next(ViewCommand::UpdateUIAllowMarks(model_config::AllowMarks(new_state)));
-                }
-                ModelCommand::UpdateZoomRatio(r) => {
-                    {
-                        let model = token.model_mut();
-                        model.config.zoom_ratio = r;
-                    }
-                    token.update_view_next(ViewCommand::UpdateZoomRatio(r));
-                    token.update_view_next(ViewCommand::UpdateUIZoomRatio(r));
-                }
-                ModelCommand::EffectNewGameButtonDown => {
-                    token.update_view_next(ViewCommand::SetButtonPressed(true));
-                }
-                ModelCommand::EffectNewGameButtonUp => {
-                    token.update_view_next(ViewCommand::SetButtonPressed(false));
-                }
-                ModelCommand::EffectPushBlock { y, x } => {
-                    token.update_view_next(ViewCommand::SetBlockPressed(y, x, false));
-                }
-                ModelCommand::EffectPopBlock { y, x } => {
-                    token.update_view_next(ViewCommand::UnsetBlockPressed(y, x, false));
-                }
-                ModelCommand::EffectBlastDownBlock { y, x } => {
-                    token.update_view_next(ViewCommand::SetBlockPressed(y, x, true));
-                }
-                ModelCommand::EffectBlastUpBlock { y, x } => {
-                    token.update_view_next(ViewCommand::UnsetBlockPressed(y, x, true));
-                }
-                ModelCommand::EffectCapture => {
-                    token.update_view_next(ViewCommand::SetCapture);
-                }
-                ModelCommand::EffectUnCapture => {
-                    token.update_view_next(ViewCommand::ReleaseCapture);
-                }
+        match command {
+            ModelCommand::Initialize => {
+                token.update_view_next(ViewCommand::Initialize);
             }
+            ModelCommand::NewGameWithBoard(v) => {
+                {
+                    let model = token.model_mut();
+                    model.board = Board::new(v.y, v.x, v.c);
+                }
+                token.update_view_next(ViewCommand::UpdateUIBoardSetting(v.clone()));
+            }
+            ModelCommand::NewGame => {
+                let model = token.model_mut();
+                let size = model.board.size();
+                let count = model.board.goal_mark_count();
+                model.board = Board::new(size.0, size.1, count);
+            }
+            ModelCommand::LoadMap(path) => {
+                let new_gamemode;
+                {
+                    let board_saved = if let Some(board_saved) = BoardSaved::import_from_file(&path)
+                    {
+                        board_saved
+                    } else {
+                        token
+                            .update_view_next(ViewCommand::AlertFailure(AlertFailure::FileIOError));
+                        return;
+                    };
+                    let model = token.model_mut();
+                    model.board = Board::new(
+                        board_saved.board_size.0,
+                        board_saved.board_size.1,
+                        board_saved.mine_pos.len(),
+                    );
+                    model.fixed_mine_pos = Some(board_saved.mine_pos.clone());
 
-            token.update_view_next(ViewCommand::Refresh);
+                    model.game_mode = GameMode::BoardPredefined(board_saved);
+                    new_gamemode = model.game_mode();
+                }
+                token.update_view_next(ViewCommand::UpdateUIGameMode(new_gamemode));
+            }
+            ModelCommand::SaveMap(path) => {
+                let new_gamemode;
+                {
+                    if !token.model_mut().game_mode.is_predefined() {
+                        let model = token.model_mut();
+                        let board_saved = BoardSaved::import_from_board(&mut model.board);
+                        model.game_mode = GameMode::BoardPredefined(board_saved);
+                    }
+                    new_gamemode = token.model_mut().game_mode();
+                    if !new_gamemode
+                        .board_saved()
+                        .unwrap()
+                        .export_to_file(&path)
+                        .is_err()
+                    {
+                        token
+                            .update_view_next(ViewCommand::AlertFailure(AlertFailure::FileIOError));
+                    }
+                }
+                token.update_view_next(ViewCommand::UpdateUIGameMode(new_gamemode));
+            }
+            ModelCommand::RestartGame => {
+                let new_gamemode;
+                {
+                    let model = token.model_mut();
+                    if !model.game_mode.is_predefined() {
+                        let board_saved = BoardSaved::import_from_board(&mut model.board);
+                        model.game_mode = GameMode::BoardPredefined(board_saved);
+                    }
+                    new_gamemode = model.game_mode();
+                    model.board = model.board.renew();
+                }
+                token.update_view_next(ViewCommand::UpdateUIGameMode(new_gamemode));
+            }
+            ModelCommand::OpenBlock(y, x) => {
+                let model = token.model_mut();
+                model.open_block(y, x);
+            }
+            ModelCommand::BlastBlock(y, x) => {
+                let model = token.model_mut();
+                model.blast_block(y, x);
+            }
+            ModelCommand::RotateBlockState(y, x) => {
+                let model = token.model_mut();
+                model.rotate_block_state(y, x);
+            }
+            ModelCommand::ToggleAllowMarks => {
+                let new_state;
+                {
+                    let model = token.model_mut();
+                    new_state = !model.config.allow_marks.0;
+                    model.board.set_allow_marks(new_state);
+                    model.config.allow_marks = model_config::AllowMarks(new_state);
+                }
+                token.update_view_next(ViewCommand::UpdateUIAllowMarks(model_config::AllowMarks(
+                    new_state,
+                )));
+            }
+            ModelCommand::UpdateZoomRatio(r) => {
+                {
+                    let model = token.model_mut();
+                    model.config.zoom_ratio = r;
+                }
+                token.update_view_next(ViewCommand::UpdateZoomRatio(r));
+                token.update_view_next(ViewCommand::UpdateUIZoomRatio(r));
+            }
+            ModelCommand::EffectNewGameButtonDown => {
+                token.update_view_next(ViewCommand::SetButtonPressed(true));
+            }
+            ModelCommand::EffectNewGameButtonUp => {
+                token.update_view_next(ViewCommand::SetButtonPressed(false));
+            }
+            ModelCommand::EffectPushBlock { y, x } => {
+                token.update_view_next(ViewCommand::SetBlockPressed(y, x, false));
+            }
+            ModelCommand::EffectPopBlock { y, x } => {
+                token.update_view_next(ViewCommand::UnsetBlockPressed(y, x, false));
+            }
+            ModelCommand::EffectBlastDownBlock { y, x } => {
+                token.update_view_next(ViewCommand::SetBlockPressed(y, x, true));
+            }
+            ModelCommand::EffectBlastUpBlock { y, x } => {
+                token.update_view_next(ViewCommand::UnsetBlockPressed(y, x, true));
+            }
+            ModelCommand::EffectCapture => {
+                token.update_view_next(ViewCommand::SetCapture);
+            }
+            ModelCommand::EffectUnCapture => {
+                token.update_view_next(ViewCommand::ReleaseCapture);
+            }
+        }
+
+        token.update_view_next(ViewCommand::Refresh);
     }
 
-    fn translate_controller_notification(controller_notification: ModelCommand) -> Option<Self::Command> {
+    fn translate_controller_notification(
+        controller_notification: ModelCommand,
+    ) -> Option<Self::Command> {
         Some(controller_notification)
     }
 }

@@ -1,31 +1,31 @@
-use crate::model::BlockShape;
-use crate::model::GameButtonDisplayKind;
-use std::cell::Cell;
-use std::num::NonZeroUsize;
-use crate::model_config::{self, Config};
-use crate::view_assets::{self};
-use crate::view_assets::BlockSpriteSheet;
-use crate::view_assets::GameButtonSpriteSheet;
-use crate::view_assets::{Assets, DigitSpriteSheet};
+use crate::controller;
+use crate::model;
 use crate::model::Block;
 use crate::model::BlockDisplayKind;
+use crate::model::BlockShape;
 use crate::model::Board;
+use crate::model::GameButtonDisplayKind;
 use crate::model::Model;
 use crate::model_config::BoardSettingKind;
-use crate::model;
-use crate::controller;
-use crate::ui::{self, Size, Point, Rect, RGBColor};
+use crate::model_config::{self, Config};
+use crate::model_gamemode;
+use crate::ui::ui_alert;
+use crate::ui::UiDraw;
+use crate::ui::UiLocalDC;
 use crate::ui::UiResult;
 use crate::ui::UiScopedDC;
 use crate::ui::UiWindow;
-use crate::ui::UiLocalDC;
-use crate::ui::UiDraw;
-use crate::model_gamemode;
-use crate::ui::ui_alert;
+use crate::ui::{self, Point, RGBColor, Rect, Size};
+use crate::view_assets;
+use crate::view_assets::BlockSpriteSheet;
+use crate::view_assets::GameButtonSpriteSheet;
+use crate::view_assets::{Assets, DigitSpriteSheet};
+use std::cell::Cell;
+use std::num::NonZeroUsize;
 
 #[derive(Debug)]
 pub enum AlertFailure {
-    FileIOError
+    FileIOError,
 }
 
 pub struct LayoutData {
@@ -106,7 +106,6 @@ impl ThreeDimBorder {
     const BORDER_WIDTH: usize = 2;
 }
 
-
 struct DigitPanel<'a> {
     pos: Point,
     value: isize,
@@ -166,7 +165,6 @@ impl<'a> UiDraw for GameButton<'a> {
         Ok(())
     }
 }
-
 
 impl<'a> UiDraw for MineBlock<'a> {
     fn draw(self, dc: &mut UiScopedDC) -> UiResult<()> {
@@ -259,7 +257,6 @@ pub enum GameTarget {
     Other,
 }
 
-
 struct LayoutState {
     button_pressed: Cell<bool>,
     window_captured: Cell<bool>,
@@ -287,7 +284,7 @@ impl LayoutZoom {
 
     fn new_with_ratio(v: usize) -> Self {
         LayoutZoom {
-            ratio: NonZeroUsize::new(v).unwrap()
+            ratio: NonZeroUsize::new(v).unwrap(),
         }
     }
     fn update_dc(&self, dc: &mut UiScopedDC) -> UiResult<()> {
@@ -298,9 +295,7 @@ impl LayoutZoom {
         }
         let v = v as f32;
         dc.set_graphics_mode(GraphicsMode::ADVANCED)?;
-        dc.set_world_transform(&Transform::new_with_values(&[
-            v, 0.0, 0.0, v, 0.0, 0.0
-        ]))?;
+        dc.set_world_transform(&Transform::new_with_values(&[v, 0.0, 0.0, v, 0.0, 0.0]))?;
 
         Ok(())
     }
@@ -332,7 +327,6 @@ impl From<model_config::ZoomRatio> for LayoutZoom {
     }
 }
 
-
 pub struct View {
     assets: Assets,
     window: Option<ui::UiWindow>,
@@ -346,7 +340,7 @@ impl View {
         let assets = view_assets::Assets::new();
         let block_area_dims = model.size();
         let layout_data = LayoutData::new(block_area_dims);
-        let layout_state= LayoutState::new();
+        let layout_state = LayoutState::new();
         let layout_zoom = LayoutZoom::new();
 
         View {
@@ -371,61 +365,67 @@ impl View {
 
     pub fn draw(&self, dc: &mut UiScopedDC, model: &Model, assets: &Assets) -> UiResult<()> {
         self.layout_zoom.update_dc(dc)?;
-        dc
-            .draw(ThreeDimBorder {
-                rect: Rect::new(Point::ORIGIN, self.layout_data.area_size),
-                border_pos: BorderPosition::Inner,
-                color_nw: RGBColor::WHITE,
-                color_se: RGBColor::GRAY,
-            })?
-            .draw(ThreeDimBorder {
-                rect: Rect::new(
-                    Point::new(LayoutData::BLOCK_AREA_X as _, LayoutData::BUTTONEDGE_TOP as _),
-                    Size::new(
-                        self.layout_data.block_area_size.cx(),
-                        GameButtonSpriteSheet::BUTTON_HEIGHT,
-                    ),
+        dc.draw(ThreeDimBorder {
+            rect: Rect::new(Point::ORIGIN, self.layout_data.area_size),
+            border_pos: BorderPosition::Inner,
+            color_nw: RGBColor::WHITE,
+            color_se: RGBColor::GRAY,
+        })?
+        .draw(ThreeDimBorder {
+            rect: Rect::new(
+                Point::new(
+                    LayoutData::BLOCK_AREA_X as _,
+                    LayoutData::BUTTONEDGE_TOP as _,
                 ),
-                border_pos: BorderPosition::Outer,
-                color_nw: RGBColor::GRAY,
-                color_se: RGBColor::WHITE,
-            })?
-            .draw(ThreeDimBorder {
-                rect: Rect::new(
-                    Point::new(LayoutData::BLOCK_AREA_X as _, LayoutData::BLOCK_AREA_Y as _),
-                    self.layout_data.block_area_size,
+                Size::new(
+                    self.layout_data.block_area_size.cx(),
+                    GameButtonSpriteSheet::BUTTON_HEIGHT,
                 ),
-                border_pos: BorderPosition::Outer,
-                color_nw: RGBColor::GRAY,
-                color_se: RGBColor::WHITE,
-            })?
-            .draw(DigitPanel {
-                pos: self.layout_data.digit_pos_1,
-                value: model.display_value_mine_left(),
+            ),
+            border_pos: BorderPosition::Outer,
+            color_nw: RGBColor::GRAY,
+            color_se: RGBColor::WHITE,
+        })?
+        .draw(ThreeDimBorder {
+            rect: Rect::new(
+                Point::new(LayoutData::BLOCK_AREA_X as _, LayoutData::BLOCK_AREA_Y as _),
+                self.layout_data.block_area_size,
+            ),
+            border_pos: BorderPosition::Outer,
+            color_nw: RGBColor::GRAY,
+            color_se: RGBColor::WHITE,
+        })?
+        .draw(DigitPanel {
+            pos: self.layout_data.digit_pos_1,
+            value: model.display_value_mine_left(),
+            assets: &assets,
+        })?
+        .draw(DigitPanel {
+            pos: self.layout_data.digit_pos_2,
+            value: model.display_value_time(),
+            assets: &assets,
+        })?
+        .draw(GameButton {
+            pos: self.layout_data.button_pos,
+            state: model.game_button_display_kind(
+                self.layout_state.button_pressed.get(),
+                self.layout_state.window_captured.get(),
+            ),
+            assets: &assets,
+        })?
+        .draw_from_iter((0..model.size().0).flat_map(move |y| {
+            (0..model.size().1).map(move |x| MineBlock {
+                minefield_pos: Point::new(
+                    LayoutData::BLOCK_AREA_X as isize,
+                    LayoutData::BLOCK_AREA_Y as isize,
+                ),
+                block_pos: (y, x),
+                block_shape_dir: Board::block_shape(y, x),
+                block_display_kind: model
+                    .block_display_kind((y, x), self.layout_state.block_pressed.get()),
                 assets: &assets,
-            })?
-            .draw(DigitPanel {
-                pos: self.layout_data.digit_pos_2,
-                value: model.display_value_time(),
-                assets: &assets,
-            })?
-            .draw(GameButton {
-                pos: self.layout_data.button_pos,
-                state: model.game_button_display_kind(self.layout_state.button_pressed.get(), self.layout_state.window_captured.get()),
-                assets: &assets,
-            })?
-            .draw_from_iter((0..model.size().0).flat_map(move |y| {
-                (0..model.size().1).map(move |x| MineBlock {
-                    minefield_pos: Point::new(
-                        LayoutData::BLOCK_AREA_X as isize,
-                        LayoutData::BLOCK_AREA_Y as isize,
-                    ),
-                    block_pos: (y, x),
-                    block_shape_dir: Board::block_shape(y, x),
-                    block_display_kind: model.block_display_kind((y, x), self.layout_state.block_pressed.get()),
-                    assets: &assets,
-                })
-            }))?;
+            })
+        }))?;
         Ok(())
     }
 
@@ -478,13 +478,14 @@ impl View {
                     if BlockSpriteSheet::hit_test_shape(
                         Board::block_shape(y_idx as usize, x_idx as usize),
                         (y_offset, x_offset),
-                    ).expect("Failed to hit test.")
-                        {
-                            return GameTarget::FieldBlock {
-                                y: y_idx as usize,
-                                x: x_idx as usize,
-                            };
-                        }
+                    )
+                    .expect("Failed to hit test.")
+                    {
+                        return GameTarget::FieldBlock {
+                            y: y_idx as usize,
+                            x: x_idx as usize,
+                        };
+                    }
                 }
             }
         }
@@ -558,14 +559,14 @@ impl ::domino::mvc::View<model::Model, controller::Controller> for View {
                     token.exec_command_next(ViewCommand::UpdateUIBoardSetting(board_setting));
                     let game_mode = token.model().game_mode();
                     token.exec_command_next(ViewCommand::UpdateUIGameMode(game_mode));
-                },
+                }
                 ViewCommand::UpdateZoomRatio(v) => {
                     let view = token.view_mut();
                     view.update_zoom_ratio(v)?;
                     if let Some(window) = view.window() {
                         window.invalidate()?;
                     }
-                },
+                }
                 ViewCommand::UpdateUIBoardSetting(v) => {
                     let view = token.view_mut();
                     if let Some(window) = view.window() {
@@ -586,7 +587,7 @@ impl ::domino::mvc::View<model::Model, controller::Controller> for View {
                     }
                     view.regenerate_layout_data((v.y, v.x));
                     view.adjust_window_layout()?;
-                },
+                }
                 ViewCommand::UpdateUIAllowMarks(v) => {
                     let view = token.view_mut();
                     if let Some(window) = view.window() {
@@ -596,23 +597,30 @@ impl ::domino::mvc::View<model::Model, controller::Controller> for View {
                                 .set_checked(v.0);
                         }
                     }
-                },
+                }
                 ViewCommand::UpdateUIZoomRatio(v) => {
                     let view = token.view_mut();
                     if let Some(window) = view.window() {
                         if let Some(mut menu) = window.menu().unwrap_or(None) {
                             for &(e, menu_item) in &[
-                                (model_config::ZoomRatio::Zoom1x, view_assets::resources::IDM_ADVANCED_ZOOM_1x),
-                                (model_config::ZoomRatio::Zoom2x, view_assets::resources::IDM_ADVANCED_ZOOM_2x),
-                                (model_config::ZoomRatio::Zoom3x, view_assets::resources::IDM_ADVANCED_ZOOM_3x),
-                                ] {
-                                let _ = menu
-                                    .item_by_command(menu_item as _)
-                                    .set_checked(v == e);
+                                (
+                                    model_config::ZoomRatio::Zoom1x,
+                                    view_assets::resources::IDM_ADVANCED_ZOOM_1x,
+                                ),
+                                (
+                                    model_config::ZoomRatio::Zoom2x,
+                                    view_assets::resources::IDM_ADVANCED_ZOOM_2x,
+                                ),
+                                (
+                                    model_config::ZoomRatio::Zoom3x,
+                                    view_assets::resources::IDM_ADVANCED_ZOOM_3x,
+                                ),
+                            ] {
+                                let _ = menu.item_by_command(menu_item as _).set_checked(v == e);
                             }
                         }
                     }
-                },
+                }
                 ViewCommand::UpdateUIGameMode(v) => {
                     let view = token.view_mut();
                     if let Some(window) = view.window() {
@@ -627,13 +635,19 @@ impl ::domino::mvc::View<model::Model, controller::Controller> for View {
                                 .item_by_command(view_assets::resources::IDM_ADVANCED_RESTART as _)
                                 .set_enabled(v.is_normal() || v.is_predefined());
                             let _ = menu
-                                .item_by_command(view_assets::resources::IDM_ADVANCED_RECORD_PLAY as _)
+                                .item_by_command(
+                                    view_assets::resources::IDM_ADVANCED_RECORD_PLAY as _,
+                                )
                                 .set_enabled(v.is_normal() || v.is_predefined());
                             let _ = menu
-                                .item_by_command(view_assets::resources::IDM_ADVANCED_RECORD_RECORD as _)
+                                .item_by_command(
+                                    view_assets::resources::IDM_ADVANCED_RECORD_RECORD as _,
+                                )
                                 .set_enabled(v.is_normal() || v.is_predefined());
                             let _ = menu
-                                .item_by_command(view_assets::resources::IDM_ADVANCED_RECORD_STOP as _)
+                                .item_by_command(
+                                    view_assets::resources::IDM_ADVANCED_RECORD_STOP as _,
+                                )
                                 .set_enabled(!v.is_normal() && !v.is_predefined());
                         }
                     }
@@ -658,14 +672,14 @@ impl ::domino::mvc::View<model::Model, controller::Controller> for View {
                     if let Some(window) = view.window() {
                         window.invalidate()?;
                     }
-                },
+                }
                 ViewCommand::SetCapture => {
                     let view = token.view_mut();
                     view.set_window_captured(true);
                     if let Some(window) = view.window() {
                         UiWindow::set_captured(Some(window))?;
                     }
-                },
+                }
                 ViewCommand::ReleaseCapture => {
                     let view = token.view_mut();
                     view.set_window_captured(false);
@@ -689,9 +703,7 @@ impl ::domino::mvc::View<model::Model, controller::Controller> for View {
     }
 
     #[allow(unused_variables)]
-    fn sync_output_with_parameter(
-        &self, model: &model::Model, param: &mut Self::OutputParameter
-    ) {
+    fn sync_output_with_parameter(&self, model: &model::Model, param: &mut Self::OutputParameter) {
         let _ = self.draw(param, model, &self.assets);
     }
 }
@@ -699,7 +711,10 @@ impl ::domino::mvc::View<model::Model, controller::Controller> for View {
 impl View {
     fn adjust_window_layout(&self) -> UiResult<()> {
         if let Some(window) = self.window() {
-            let rect = Rect::new(Point::ORIGIN, self.layout_zoom.zoom_size(self.layout_data.area_size));
+            let rect = Rect::new(
+                Point::ORIGIN,
+                self.layout_zoom.zoom_size(self.layout_data.area_size),
+            );
             let new_rect = UiWindow::predict_window_rect_from_client_rect_and_window(rect, window)?;
             window.reposition_set_size(new_rect.size())?;
             window.invalidate_and_erase()?;
