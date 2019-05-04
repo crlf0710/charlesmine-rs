@@ -48,9 +48,9 @@ impl Ui {
         use apiw::full_windows_api::um::winnls::SetThreadUILanguage;
         use apiw::full_windows_api::um::winnt::MAKELANGID;
 
-        unsafe {
-            SetThreadUILanguage(MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US));
-        }
+        //unsafe {
+        // SetThreadUILanguage(MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US));
+        //}
 
         Self::create_main_window()?;
 
@@ -344,6 +344,12 @@ impl Ui {
                                     ));
                                     Ok(())
                                 })?;
+                            }
+                            resources::IDM_HELP_ABOUT => {
+                                use apiw::windows_subsystem::dialog::DialogBuilder;
+
+                                DialogBuilder::new_from_resource_id(resources::IDD_ABOUTBOX as _)
+                                    .invoke()?;
                             }
                             _ => {}
                         }

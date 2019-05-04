@@ -196,6 +196,62 @@ fn compile_resource() {
                 )
                 .build(),
         )
+        .resource(
+            catalog::IDD_ABOUTBOX,
+            resource::Dialog::from_builder()
+                .system_menu()
+                .caption(MultiLangText::from("About").lang(lang::LANG_CHS, "关于"))
+                .font(
+                    "Tahoma",
+                    FontSize::pt(9),
+                    FontWeight::default(),
+                    FontItalic::default(),
+                    FontCharset::default(),
+                )
+                .lang_specific_font(
+                    lang::LANG_CHS,
+                    "SimSun",
+                    FontSize::pt(9),
+                    FontWeight::default(),
+                    FontItalic::default(),
+                    FontCharset::default(),
+                )
+                .style(dialog::DialogStyle::MODAL_FRAME)
+                .rect(Rect::new(22, 17, 186, 60))
+                .control(
+                    catalog::IDC_MYICON,
+                    dialog::Control::from_template(dialog::ControlTemplate::ICON)
+                        .image_id(catalog::IDI_CHARLESMINE)
+                        .rect(Rect::new(14, 9, 21, 21)),
+                )
+                .control(
+                    catalog::IDC_TEXT1,
+                    dialog::Control::from_template(dialog::ControlTemplate::LTEXT)
+                        .text(
+                            MultiLangText::from("CharlesMine 1.0")
+                                .lang(lang::LANG_CHS, "钻石扫雷 1.0"),
+                        )
+                        .rect(Rect::new(49, 10, 119, 8))
+                        .style(dialog::StaticControlStyle::NO_PREFIX),
+                )
+                .control(
+                    catalog::IDC_TEXT2,
+                    dialog::Control::from_template(dialog::ControlTemplate::LTEXT)
+                        .text(
+                            MultiLangText::from("CrLF0710 Home-made")
+                                .lang(lang::LANG_CHS, "CrLF0710 制作"),
+                        )
+                        .rect(Rect::new(49, 20, 119, 8)),
+                )
+                .control(
+                    predefined_id::OK,
+                    dialog::Control::from_template(dialog::ControlTemplate::DEFPUSHBUTTON)
+                        .text(MultiLangText::from("OK"))
+                        .rect(Rect::new(75, 32, 36, 15))
+                        .style(dialog::WindowStyle::GROUP),
+                )
+                .build(),
+        )
         .compile()
         .expect("Failed to compile resource");
 }

@@ -6,28 +6,6 @@
 
 LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 
-// Icon
-
-IDI_CHARLESMINE         ICON                    "../res/CharlesMine.ico"
-
-// Accelerator
-
-IDC_CHARLESMINE ACCELERATORS
-BEGIN
-    "/",            IDM_HELP_ABOUT,         ASCII,  ALT, NOINVERT
-    "?",            IDM_HELP_ABOUT,         ASCII,  ALT, NOINVERT
-    VK_F2,          IDM_FILE_NEW,           VIRTKEY, NOINVERT
-    VK_F8,          IDM_ADVANCED_RESTART,   VIRTKEY, NOINVERT
-    VK_F12,         IDM_ADVANCED_RECORD_STOP, VIRTKEY, NOINVERT
-    VK_F5,          IDM_ADVANCED_LOADMAP,   VIRTKEY, NOINVERT
-    VK_F6,          IDM_ADVANCED_SAVEMAP,   VIRTKEY, NOINVERT
-END
-
-// Bitmap
-
-IDB_BLOCKS              BITMAP                  "..\\res\\Blocks.bmp"
-IDB_BUTTON              BITMAP                  "..\\res\\Button.bmp"
-IDB_DIGIT               BITMAP                  "..\\res\\Digit.bmp"
 
 // Dialog
 
@@ -84,47 +62,6 @@ BEGIN
     LTEXT           "",IDC_EXTRA3,92,35,76,8,NOT WS_GROUP
 END
 
-LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
-
-// Menu
-
-IDC_CHARLESMINE MENU
-BEGIN
-    POPUP "&Game"
-    BEGIN
-        MENUITEM "&New\tF2",                  IDM_FILE_NEW
-        MENUITEM SEPARATOR
-        MENUITEM "&Beginner",                      IDM_FILE_GAME_EASY
-        MENUITEM "&Intermediate",                      IDM_FILE_GAME_MEDIUM
-        MENUITEM "&Expert",                      IDM_FILE_GAME_HARD
-        MENUITEM "&Custom...",                  IDM_FILE_GAME_CUSTOM
-        MENUITEM SEPARATOR
-        MENUITEM "&Marks (?)",                   IDM_FILE_MARK
-        MENUITEM SEPARATOR
-        MENUITEM "Best &Times...",                IDM_FILE_HERO_LIST
-        MENUITEM SEPARATOR
-        MENUITEM "E&xit",                      IDM_FILE_EXIT
-    END
-    POPUP "&Advanced"
-    BEGIN
-        MENUITEM "&Load Game\tF5",                IDM_ADVANCED_LOADMAP
-        MENUITEM "&Save Game\tF6",                IDM_ADVANCED_SAVEMAP
-        MENUITEM SEPARATOR
-        MENUITEM "&Restart Game\tF8",              IDM_ADVANCED_RESTART
-        MENUITEM SEPARATOR
-        MENUITEM "Start R&ecording",                    IDM_ADVANCED_RECORD_RECORD
-        MENUITEM "Start &Playback",                    IDM_ADVANCED_RECORD_PLAY
-        MENUITEM "S&top Recording/Playback\tF12",                 IDM_ADVANCED_RECORD_STOP
-        MENUITEM SEPARATOR
-        MENUITEM "Zoom 1x"                        IDM_ADVANCED_ZOOM_1x
-        MENUITEM "Zoom 2x"                        IDM_ADVANCED_ZOOM_2x
-        MENUITEM "Zoom 3x"                        IDM_ADVANCED_ZOOM_3x
-    END
-    POPUP "&Help"
-    BEGIN
-        MENUITEM "&About CharlesMine...",              IDM_HELP_ABOUT
-    END
-END
 
 // String Table
 
@@ -179,48 +116,6 @@ STRINGTABLE
 BEGIN
     IDS_FILE_RECORD_START   "准备好后请点击确定或按回车键开始录像。"
     IDS_FILE_RECORD_RESTART "本局失败！要重新开始一局并重新录像么？"
-END
-
-LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
-
-// Menu
-
-IDC_CHARLESMINE MENU 
-BEGIN
-    POPUP "游戏(&G)"
-    BEGIN
-        MENUITEM "开局(&N)\tF2",                  IDM_FILE_NEW
-        MENUITEM SEPARATOR
-        MENUITEM "初级(&B)",                      IDM_FILE_GAME_EASY
-        MENUITEM "中级(&I)",                      IDM_FILE_GAME_MEDIUM
-        MENUITEM "高级(&E)",                      IDM_FILE_GAME_HARD
-        MENUITEM "自定义(&C)...",                  IDM_FILE_GAME_CUSTOM
-        MENUITEM SEPARATOR
-        MENUITEM "标记(?)(&M)",                   IDM_FILE_MARK
-        MENUITEM SEPARATOR
-        MENUITEM "扫雷英雄榜(&T)...",                IDM_FILE_HERO_LIST
-        MENUITEM SEPARATOR
-        MENUITEM "退出(&X)",                      IDM_FILE_EXIT
-    END
-    POPUP "高级(&A)"
-    BEGIN
-        MENUITEM "加载雷局(&L)\tF5",                IDM_ADVANCED_LOADMAP
-        MENUITEM "保存雷局(&S)\tF6",                IDM_ADVANCED_SAVEMAP
-        MENUITEM SEPARATOR
-        MENUITEM "重新开始本局(&R)\tF8",              IDM_ADVANCED_RESTART
-        MENUITEM SEPARATOR
-        MENUITEM "开始录像(&E)",                    IDM_ADVANCED_RECORD_RECORD
-        MENUITEM "开始回放(&P)",                    IDM_ADVANCED_RECORD_PLAY
-        MENUITEM "停止(&T)\tF12",                 IDM_ADVANCED_RECORD_STOP
-        MENUITEM SEPARATOR
-        MENUITEM "缩放 1x"                        IDM_ADVANCED_ZOOM_1x
-        MENUITEM "缩放 2x"                        IDM_ADVANCED_ZOOM_2x
-        MENUITEM "缩放 3x"                        IDM_ADVANCED_ZOOM_3x
-    END
-    POPUP "帮助(&H)"
-    BEGIN
-        MENUITEM "关于 钻石扫雷(&A)...",              IDM_HELP_ABOUT
-    END
 END
 
 // String Table
