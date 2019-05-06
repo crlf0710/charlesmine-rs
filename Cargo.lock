@@ -11,7 +11,7 @@ dependencies = [
 [[package]]
 name = "apiw"
 version = "0.1.0"
-source = "git+https://github.com/crlf0710/apiw-rs#875e3b94b0ac04498de39af425a5a1922c860d9e"
+source = "git+https://github.com/crlf0710/apiw-rs#77a81306d80f4b70d67bbdf5063520ee133fe3f3"
 dependencies = [
  "bitflags 1.0.4 (registry+https://github.com/rust-lang/crates.io-index)",
  "derive_more 0.11.0 (registry+https://github.com/rust-lang/crates.io-index)",

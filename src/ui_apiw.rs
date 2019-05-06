@@ -43,19 +43,22 @@ pub struct Ui;
 
 impl Ui {
     pub(crate) fn initialization() -> apiw::Result<()> {
-        use apiw::full_windows_api::shared::ntdef::LANG_ENGLISH;
-        use apiw::full_windows_api::shared::ntdef::SUBLANG_ENGLISH_US;
-        use apiw::full_windows_api::um::winnls::SetThreadUILanguage;
-        use apiw::full_windows_api::um::winnt::MAKELANGID;
+        #[cfg(windows)]
+        {
+            use apiw::full_windows_api::shared::ntdef::LANG_ENGLISH;
+            use apiw::full_windows_api::shared::ntdef::SUBLANG_ENGLISH_US;
+            use apiw::full_windows_api::um::winnls::SetThreadUILanguage;
+            use apiw::full_windows_api::um::winnt::MAKELANGID;
 
-        //unsafe {
-        // SetThreadUILanguage(MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US));
-        //}
+            //unsafe {
+            // SetThreadUILanguage(MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US));
+            //}
+        }
 
         Self::create_main_window()?;
 
         THE_GAME.with(|game| {
-            let mut game = game.try_borrow_mut().or_else(|_| apiw::Error::last())?;
+            let mut game = game.try_borrow_mut().or_else(|_| apiw::internal_error())?;
             let game = &mut *game;
             game.mvc.process_input(ControllerInput::Initialize);
             Ok(())
@@ -151,7 +154,7 @@ impl Ui {
             request
                 .route_create(|window: &ForeignWindow, _| -> apiw::Result<bool> {
                     THE_GAME.with(|game| {
-                        let mut game = game.try_borrow_mut().or_else(|_| apiw::Error::last())?;
+                        let mut game = game.try_borrow_mut().or_else(|_| apiw::internal_error())?;
                         let game = &mut *game;
                         game.mvc.redirect_output_target(Some(window.clone()));
                         window.invalidate()?;
@@ -163,7 +166,7 @@ impl Ui {
                     let mut paint_dc = window.do_paint()?;
 
                     THE_GAME.with(|game| {
-                        let game = game.try_borrow().or_else(|_| apiw::Error::last())?;
+                        let game = game.try_borrow().or_else(|_| apiw::internal_error())?;
                         game.mvc.sync_output_with_parameter(&mut paint_dc);
                         Ok(())
                     })?;
@@ -176,7 +179,7 @@ impl Ui {
                             use apiw::windows_subsystem::window::MouseEventArgType;
 
                             let mut game =
-                                game.try_borrow_mut().or_else(|_| apiw::Error::last())?;
+                                game.try_borrow_mut().or_else(|_| apiw::internal_error())?;
                             let game = &mut *game;
 
                             let mut target = None;
@@ -230,7 +233,7 @@ impl Ui {
                             resources::IDM_FILE_NEW => {
                                 THE_GAME.with(|game| {
                                     let mut game =
-                                        game.try_borrow_mut().or_else(|_| apiw::Error::last())?;
+                                        game.try_borrow_mut().or_else(|_| apiw::internal_error())?;
                                     let game = &mut *game;
                                     game.mvc.process_input(ControllerInput::ModelCommand(
                                         ModelCommand::NewGame,
@@ -243,7 +246,7 @@ impl Ui {
                             | resources::IDM_FILE_GAME_HARD => {
                                 THE_GAME.with(|game| {
                                     let mut game =
-                                        game.try_borrow_mut().or_else(|_| apiw::Error::last())?;
+                                        game.try_borrow_mut().or_else(|_| apiw::internal_error())?;
                                     let game = &mut *game;
                                     let boardsetting = match args.id() as isize {
                                         resources::IDM_FILE_GAME_EASY => {
@@ -266,7 +269,7 @@ impl Ui {
                             resources::IDM_FILE_MARK => {
                                 THE_GAME.with(|game| {
                                     let mut game =
-                                        game.try_borrow_mut().or_else(|_| apiw::Error::last())?;
+                                        game.try_borrow_mut().or_else(|_| apiw::internal_error())?;
                                     let game = &mut *game;
 
                                     game.mvc.process_input(ControllerInput::ModelCommand(
@@ -280,7 +283,7 @@ impl Ui {
                             | resources::IDM_ADVANCED_ZOOM_3x => {
                                 THE_GAME.with(|game| {
                                     let mut game =
-                                        game.try_borrow_mut().or_else(|_| apiw::Error::last())?;
+                                        game.try_borrow_mut().or_else(|_| apiw::internal_error())?;
                                     let game = &mut *game;
 
                                     game.mvc.process_input(ControllerInput::ModelCommand(
@@ -308,7 +311,7 @@ impl Ui {
                                     THE_GAME.with(|game| {
                                         let mut game = game
                                             .try_borrow_mut()
-                                            .or_else(|_| apiw::Error::last())?;
+                                            .or_else(|_| apiw::internal_error())?;
                                         let game = &mut *game;
 
                                         game.mvc.process_input(ControllerInput::ModelCommand(
@@ -323,7 +326,7 @@ impl Ui {
                                     THE_GAME.with(|game| {
                                         let mut game = game
                                             .try_borrow_mut()
-                                            .or_else(|_| apiw::Error::last())?;
+                                            .or_else(|_| apiw::internal_error())?;
                                         let game = &mut *game;
 
                                         game.mvc.process_input(ControllerInput::ModelCommand(
@@ -336,7 +339,7 @@ impl Ui {
                             resources::IDM_ADVANCED_RESTART => {
                                 THE_GAME.with(|game| {
                                     let mut game =
-                                        game.try_borrow_mut().or_else(|_| apiw::Error::last())?;
+                                        game.try_borrow_mut().or_else(|_| apiw::internal_error())?;
                                     let game = &mut *game;
 
                                     game.mvc.process_input(ControllerInput::ModelCommand(
@@ -357,10 +360,10 @@ impl Ui {
                     },
                 )
                 .route_destroy(|_window: &ForeignWindow| -> apiw::Result<()> {
-                    unsafe {
-                        apiw::full_windows_api::um::winuser::PostQuitMessage(0);
-                    }
+                    use apiw::windows_subsystem::message::ForeignMessageLoop;
 
+                    ForeignMessageLoop::request_quit();
+                    
                     Ok(())
                 });
         }
