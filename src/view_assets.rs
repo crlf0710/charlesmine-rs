@@ -210,7 +210,7 @@ impl BlockSpriteSheet {
     pub const BLOCKDELTA_X: usize = 13;
     pub const BLOCKDELTA_Y: usize = 20;
 
-    pub const TRANSPARENT_COLOR: RGBColor = RGBColor::MAGENTA;
+    pub const TRANSPARENT_COLOR: RGBColor = RGBColor::FUCHSIA;
 
     pub fn new() -> Self {
         BlockSpriteSheet {
