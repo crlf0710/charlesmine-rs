@@ -303,7 +303,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 [[package]]
 name = "resw"
 version = "0.1.0"
-source = "git+https://github.com/crlf0710/resw-rs#bf42aa74e12c1ddc0075e02344596adeffee8692"
+source = "git+https://github.com/crlf0710/resw-rs#b486441568de5f45b77d16c65e4965acd6346d39"
 dependencies = [
  "embed-resource 1.3.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "winapi 0.3.8 (registry+https://github.com/rust-lang/crates.io-index)",
