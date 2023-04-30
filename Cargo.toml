@@ -3,17 +3,17 @@ name = "charlesmine"
 version = "0.1.0"
 authors = ["CrLF0710 <crlf0710@gmail.com>"]
 edition = "2018"
+rust-version = "1.50"
 
 [dependencies]
 apiw = { git = "https://github.com/crlf0710/apiw-rs" }
 concerto = { git = "https://github.com/crlf0710/concerto-rs" }
 domino = { git = "https://github.com/crlf0710/domino-rs" }
-rand = "0.7"
-chrono = "0.4"
-clamp = "0.1"
+rand = {version = "0.8", default-features = false, features = ["std", "std_rng"]}
+chrono = {version = "0.4", default-features = false, features = ["clock"]}
 smallvec = "1"
 log = "0.4"
-env_logger = "0.7"
+env_logger = {version = "0.10", default-features = false}
 
 [target.'cfg(windows)'.build-dependencies]
 resw = { git = "https://github.com/crlf0710/resw-rs" }

@@ -1,4 +1,3 @@
-use clamp::clamp;
 use std::cell::RefCell;
 use std::rc::Rc;
 
@@ -39,9 +38,9 @@ impl BoardSetting {
     };
 
     pub fn new_custom(mut x: usize, mut y: usize, mut c: usize) -> Self {
-        x = clamp(Self::EASY.x, x, Self::HARD.x);
-        y = clamp(Self::EASY.y, y, Self::HARD.y);
-        c = clamp(Self::EASY.c, c, (x - 1) * (y - 1));
+        x = Ord::clamp(Self::EASY.x, x, Self::HARD.x);
+        y = Ord::clamp(Self::EASY.y, y, Self::HARD.y);
+        c = Ord::clamp(Self::EASY.c, c, (x - 1) * (y - 1));
         BoardSetting {
             x,
             y,
